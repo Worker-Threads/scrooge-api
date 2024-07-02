@@ -6,7 +6,7 @@ export const init = () => ({
     method: 'post',
     access: 'none',
     schema: schemas.hello,
-    handler: (request) => {
+    handler: (_session, request) => {
       const { name } = request.body;
       return `Hello ${name}!`;
     },
