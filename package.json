@@ -4,7 +4,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js",
+    "start": "node src/main.js",
     "check": "tsc --project . && eslint ."
   },
   "keywords": [],

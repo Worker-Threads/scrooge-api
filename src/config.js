@@ -2,6 +2,9 @@ import 'dotenv/config';
 import { requireEnv } from './utils/env.js';
 
 export const config = {
+  server: {
+    port: parseInt(process.env.PORT || '8080'),
+  },
   pg: {
     host: requireEnv('PG_HOST'),
     port: parseInt(requireEnv('PG_PORT')),
