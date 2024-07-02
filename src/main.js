@@ -1,12 +1,12 @@
 /** @typedef {import('./api/types.js').API} API */
 
-import pg from 'pg';
 import { config } from './config.js';
+import { init as pgPoolInit } from './infra/pg.js';
 import { init as userRepoInit } from './data/user/main.js';
 import { init as userApiInit } from './api/user/user.js';
 import { init as serverInit } from './server/server.js';
 
-const pool = new pg.Pool(config.pg);
+const pool = pgPoolInit(config.pg);
 const userRepo = userRepoInit(pool);
 const userApi = userApiInit({ userRepo });
 
