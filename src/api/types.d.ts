@@ -1,7 +1,10 @@
+type Schema = { properties: object } & any;
+
 export interface Handler<Params = any, Result = any> {
   method: 'get' | 'post';
   access: 'none' | 'common';
-  schema: object;
+  params?: string[];
+  schema: Schema;
   handler: (session: object | null, params: Params) => Result;
 }
 

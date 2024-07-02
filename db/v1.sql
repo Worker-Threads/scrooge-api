@@ -20,7 +20,7 @@ CREATE TYPE "user"."asset_type" AS ENUM(
 CREATE TABLE IF NOT EXISTS "user"."portfolio" (
   "id" SERIAL,
   "userId" INT NOT NULL REFERENCES "user"."user"("id"),
-	"type" asset_type NOT NULL,
+	"type" "user"."asset_type" NOT NULL,
 	PRIMARY KEY ("id")
 );
 

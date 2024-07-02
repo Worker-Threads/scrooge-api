@@ -1,14 +1,27 @@
 import * as schemas from './schemas.js';
 
 /** @type {import('./types').init} */
-export const init = () => ({
+export const init = ({ userRepo }) => ({
   greet: {
-    method: 'post',
+    method: 'get',
     access: 'none',
-    schema: schemas.hello,
+    schema: schemas.greet,
     handler: (_session, request) => {
-      const { name } = request.body;
+      const { name } = request.query;
+
       return `Hello ${name}!`;
+    },
+  },
+
+  getById: {
+    method: 'get',
+    access: 'none',
+    params: ['id'],
+    schema: schemas.getById,
+    handler: (_session, request) => {
+      const { id } = request.params;
+
+      return userRepo.findById(id);
     },
   },
 });

@@ -7,19 +7,19 @@ export const server = fastify();
 
 /** @type {init} */
 export const init = (api) => {
-  for (const [domain, handlersMap] of Object.entries(api)) {
-    for (const [route, handler] of Object.entries(handlersMap)) {
-      const path = `/${domain}/${route}`;
+  for (const [service, handlers] of Object.entries(api)) {
+    for (const [subPath, endpoint] of Object.entries(handlers)) {
+      const { access, method, params, schema, handler } = endpoint;
+      const urlParams = params?.length ? `/:${params.join(':/')}` : '';
+      const path = `/${service}/${subPath}${urlParams}`;
       const session =
-        handler.access !== 'none'
+        access !== 'none'
           ? {
               /* Here some session handling  */
             }
           : null;
-      server[handler.method](
-        path,
-        { schema: handler.schema },
-        (request, reply) => handler.handler(session, request),
+      server[method](path, { schema: schema.properties }, (request, reply) =>
+        handler(session, request),
       );
     }
   }

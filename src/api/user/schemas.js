@@ -1,7 +1,7 @@
-export const hello = /** @type {const} */ ({
+export const greet = /** @type {const} */ ({
   type: 'object',
   properties: {
-    body: {
+    query: {
       type: 'object',
       properties: {
         name: { type: 'string' },
@@ -9,5 +9,19 @@ export const hello = /** @type {const} */ ({
       required: ['name'],
     },
   },
-  required: ['body'],
+  required: ['query'],
+});
+
+export const getById = /** @type {const} */ ({
+  type: 'object',
+  properties: {
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'number' },
+      },
+      required: ['id'],
+    },
+  },
+  required: ['params'],
 });
