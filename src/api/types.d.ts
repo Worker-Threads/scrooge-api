@@ -1,12 +1,12 @@
-interface Handler<Params, Result> {
-  (params: Params): Result;
-}
-
-export interface ApiHandler<Params = any, Result = any> {
+export interface Handler<Params = any, Result = any> {
   method: 'get' | 'post';
   access: 'none' | 'common';
   schema: object;
-  handler: Handler<Params, Result>;
+  handler: (session: object | null, params: Params) => Result;
 }
 
-export type API = Record<string, ApiHandler>;
+export interface DomainApi {
+  [key: string]: Handler;
+}
+
+export type API = Record<string, DomainApi>;

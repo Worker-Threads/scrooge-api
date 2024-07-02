@@ -1,15 +1,26 @@
-/** @typedef {import('../api/types.js').API} API */
+/** @typedef {import('./types').init} init */
 
 import { fastify } from 'fastify';
 import { config } from '../config.js';
 
 export const server = fastify();
 
-/** @param {Record<string, API>} api */
+/** @type {init} */
 export const init = (api) => {
   for (const [domain, handlersMap] of Object.entries(api)) {
     for (const [route, handler] of Object.entries(handlersMap)) {
-      server[handler.method](`/${domain}/${route}`, handler);
+      const path = `/${domain}/${route}`;
+      const session =
+        handler.access !== 'none'
+          ? {
+              /* Here some session handling  */
+            }
+          : null;
+      server[handler.method](
+        path,
+        { schema: handler.schema },
+        (request, reply) => handler.handler(session, request),
+      );
     }
   }
 

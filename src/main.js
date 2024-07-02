@@ -5,6 +5,6 @@ import { init as userApiInit } from './api/user/user.js';
 
 const userApi = userApiInit();
 
-/** @type {Record<string, API>} */
+/** @type {API} */
 const api = { user: userApi };
 serverInit(api);
