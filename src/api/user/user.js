@@ -1,7 +1,7 @@
 import * as schemas from './schemas.js';
 
 /** @type {import('./types').init} */
-export const init = ({ userRepo }) => ({
+export const init = ({ userService }) => ({
   greet: {
     method: 'get',
     access: 'none',
@@ -21,7 +21,7 @@ export const init = ({ userRepo }) => ({
     handler: (_session, request) => {
       const { id } = request.params;
 
-      return userRepo.findById(id);
+      return userService.findById(id);
     },
   },
 });
