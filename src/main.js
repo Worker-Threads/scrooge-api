@@ -12,6 +12,4 @@ const userRepo = userRepoInit(pool);
 const userService = userServiceInit({ userRepo });
 const userApi = userApiInit({ userService });
 
-/** @type {API} */
-const api = { user: userApi };
-serverInit(api);
+serverInit({ user: userApi });

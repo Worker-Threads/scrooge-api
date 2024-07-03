@@ -6,21 +6,20 @@ import { config } from '../config.js';
 export const server = fastify();
 
 /** @type {init} */
-export const init = (api) => {
-  for (const [service, handlers] of Object.entries(api)) {
-    for (const [subPath, endpoint] of Object.entries(handlers)) {
+export const init = (apis) => {
+  for (const [service, api] of Object.entries(apis)) {
+    for (const [route, endpoint] of Object.entries(api)) {
       const { access, method, params, schema, handler } = endpoint;
       const urlParams = params?.length ? `/:${params.join(':/')}` : '';
-      const path = `/${service}/${subPath}${urlParams}`;
+      const path = `/${service}/${route}${urlParams}`;
+      const opts = { schema };
       const session =
         access !== 'none'
           ? {
               /* Here some session handling  */
             }
           : null;
-      server[method](path, { schema: schema.properties }, (request, reply) =>
-        handler(session, request),
-      );
+      server[method](path, opts, (request, reply) => handler(session, request));
     }
   }
 

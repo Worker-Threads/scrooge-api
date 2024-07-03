@@ -1,6 +1,6 @@
 type Schema = { properties: object } & any;
 
-export interface Handler<Params = any, Result = any> {
+export interface Endpoint<Params = any, Result = any> {
   method: 'get' | 'post';
   access: 'none' | 'common';
   params?: string[];
@@ -8,8 +8,6 @@ export interface Handler<Params = any, Result = any> {
   handler: (session: object | null, params: Params) => Result;
 }
 
-export interface DomainApi {
-  [key: string]: Handler;
+export interface API {
+  [key: string]: Endpoint;
 }
-
-export type API = Record<string, DomainApi>;
