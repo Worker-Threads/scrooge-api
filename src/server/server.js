@@ -1,9 +1,13 @@
 /** @typedef {import('./types').init} init */
 
 import { fastify } from 'fastify';
+import { plugins } from './plugins.js';
 import { config } from '../config.js';
 
 export const server = fastify();
+
+for (const plugin of plugins)
+  await server.register(plugin.plugin, plugin.options);
 
 /** @type {init} */
 export const init = (apis) => {
