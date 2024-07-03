@@ -19,6 +19,7 @@ export const init = (apis) => {
               /* Here some session handling  */
             }
           : null;
+
       server[method](path, opts, (request, reply) => handler(session, request));
     }
   }

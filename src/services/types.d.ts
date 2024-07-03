@@ -1,10 +1,8 @@
-import type { User } from '../entities/user.d.ts';
-import type { UserRepo } from '../data/user/types.d.ts';
+import type { Repos } from '../data/types.js';
+import type { UserService } from './user/types.d.ts';
 
-export interface UserService {
-  findById: (id: number) => Promise<User>;
+export interface Services {
+  user: UserService;
 }
 
-export interface Init {
-  user: (deps: { userRepo: UserRepo }) => UserService;
-}
+export function init(repos: Repos): Services;

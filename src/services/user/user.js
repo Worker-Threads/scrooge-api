@@ -1,4 +1,4 @@
-/** @typedef {import('./types.d.ts').Init['user']} init */
+/** @typedef {import('./types.d.ts').init} init */
 
 /** @type {init} */
 export const init = ({ userRepo }) => ({
