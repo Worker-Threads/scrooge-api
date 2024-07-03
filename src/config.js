@@ -1,15 +1,15 @@
 import 'dotenv/config';
-import { requireEnv } from './utils/env.js';
+import { env } from './utils/env.js';
 
 export const config = {
   server: {
     port: parseInt(process.env.PORT || '8080'),
   },
   pg: {
-    host: requireEnv('PG_HOST'),
-    port: parseInt(requireEnv('PG_PORT')),
-    user: requireEnv('PG_USER'),
-    database: requireEnv('PG_DATABASE'),
-    password: requireEnv('PG_PASSWORD'),
+    host: env.requireEnv('PG_HOST'),
+    port: parseInt(env.requireEnv('PG_PORT')),
+    user: env.requireEnv('PG_USER'),
+    database: env.requireEnv('PG_DATABASE'),
+    password: env.requireEnv('PG_PASSWORD'),
   },
 };

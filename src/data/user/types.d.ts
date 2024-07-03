@@ -3,6 +3,8 @@ import type { User } from '../../entities/user.d.ts';
 
 export class UserRepo {
   findById: (id: number) => Promise<User>;
+  findOne: (definition: Partial<User>) => Promise<User>;
+  create: (user: Omit<User, 'id'>) => Promise<User>;
 }
 
 export function init(pg: Pool): UserRepo;

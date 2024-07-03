@@ -1,6 +1,6 @@
-import type { UserApi } from './user/types.d.ts';
 import type { Services } from '../services/types.d.ts';
-
+import type { UserApi } from './user/types.d.ts';
+import type { AuthApi } from './auth/types.d.ts';
 export interface Endpoint<Params, Result> {
   method: 'get' | 'post';
   access: 'none' | 'common';
@@ -14,6 +14,7 @@ export interface API {
 }
 
 export interface APIs extends Record<string, API> {
+  auth: AuthApi;
   user: UserApi;
 }
 

@@ -1,14 +1,37 @@
+/** @typedef {import('../../entities/user').User} User */
+
 /**
- * @param {number} id
+ * @param {Omit<User, 'id'>} definition
  * @returns {{ query: string, params: any[] }}
  */
-export const selectById = (id) => {
+export const create = (definition) => {
   const query = `
-    SELECT * from "user"."user"
-    WHERE "user".id = $1;
+    INSERT INTO "user"."user"
+    ("email", "username", "password")
+    VALUES($1, $2, $3)
+    RETURNING *;
   `;
 
-  const params = [id];
+  const params = [definition.email, definition.username, definition.password];
+
+  return { query, params };
+};
+
+/**
+ * @param {Partial<User>} definition
+ * @returns {{ query: string, params: any[] }}
+ */
+export const selectOne = (definition) => {
+  const select = 'SELECT * from "user"."user"';
+  const where =
+    ' WHERE ' +
+    Object.keys(definition)
+      .map((k, i) => `"${k}" = $${i + 1}`)
+      .join(' AND ');
+
+  const query = select + where + ';';
+
+  const params = Object.values(definition);
 
   return { query, params };
 };
