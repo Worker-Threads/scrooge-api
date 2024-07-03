@@ -12,7 +12,7 @@ export const init = (apis) => {
       const { access, method, params, schema, handler } = endpoint;
       const urlParams = params?.length ? `/:${params.join(':/')}` : '';
       const path = `/${service}/${route}${urlParams}`;
-      const opts = { schema };
+      const opts = { schema: schema.properties };
       const session =
         access !== 'none'
           ? {
