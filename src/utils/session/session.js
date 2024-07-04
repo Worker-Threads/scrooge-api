@@ -1,27 +1,28 @@
-import * as fs from 'node:fs';
+import * as fsp from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { jwt } from './jwt.js';
-import { env } from '../env/env.js';
-import { exception } from '../exception/exception.js';
 import { config } from '../../config.js';
+import { exception } from '../exception/exception.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('./types.d.ts').Sessions} */
 export const sessions = {
-  generate: (user) => {
+  generate: async (user) => {
     const { id } = user;
-    let privateKey = fs.readFileSync(
-      env.requireEnv('PRIVATE_KEY_FILENAME'),
-      'utf8',
-    );
+    const filePath = path.join(__dirname, config.jwt.privateKeyFiePath);
+    const privateKey = await fsp.readFile(filePath, 'utf8');
     const token = jwt.issue(privateKey, { id }, config.jwt.tokenTtl);
+
     return { token, user };
   },
 
-  validate: (token) => {
+  validate: async (token) => {
     if (!token) throw exception.unauthorized('No token provided.');
-    let publicKey = fs.readFileSync(
-      env.requireEnv('PUBLIC_KEY_FILENAME'),
-      'utf8',
-    );
+    const filePath = path.join(__dirname, config.jwt.publicKeyFiePath);
+    const publicKey = await fsp.readFile(filePath, 'utf8');
+
     return jwt.verify(publicKey, token);
   },
 };

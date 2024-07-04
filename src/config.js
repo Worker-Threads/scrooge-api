@@ -15,5 +15,7 @@ export const config = {
   },
   jwt: {
     tokenTtl: parseInt(env.requireEnv('JWT_TOKEN_TTL')),
+    publicKeyFiePath: env.requireEnv('PUBLIC_KEY_FILENAME'),
+    privateKeyFiePath: env.requireEnv('PRIVATE_KEY_FILENAME'),
   },
 };

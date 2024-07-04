@@ -1,6 +1,6 @@
-import { ApiError } from '../../utils/exception/exception.js';
-import { utils } from '../../utils/main.js';
-const { passwords, sessions, exception } = utils;
+import { sessions } from '../../utils/session/session.js';
+import { exception } from '../../utils/exception/exception.js';
+import { passwords } from '../../utils/passwords/passwords.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = ({ userRepo }) => ({
@@ -33,14 +33,14 @@ export const init = ({ userRepo }) => ({
       if (access === 'none') return { user: {}, token: '' };
 
       if (!token) throw exception.unauthorized('No token provided.');
-      const payload = sessions.validate(token);
-      if (!payload?.id) throw exception.unauthorized('Invalid token payload.');
+      const payload = await sessions.validate(token);
+      if (!payload.id) throw exception.unauthorized('Invalid token payload.');
       const user = await userRepo.findOne({ id: payload.id });
       if (!user) throw exception.unauthorized('User not found.');
 
       return { user, token };
     } catch (err) {
-      if (err instanceof ApiError) throw err;
+      if (exception.isCustomException(err)) throw err;
       console.log('Resolve Session error', err);
       throw exception.unauthorized();
     }

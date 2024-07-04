@@ -12,19 +12,18 @@ export const jwt = {
   issue: (privateKey, payload, ttl) => {
     const headerString = JSON.stringify(jwt.headerObject);
     const encodedHeader = Buffer.from(headerString).toString('base64url');
-    const exp = Date.now() + ttl;
     const payloadString = JSON.stringify({
       iss: 'scrooge',
-      exp: exp,
+      exp: Date.now() + ttl,
       ...payload,
     });
-    let encodedPayload = Buffer.from(payloadString).toString('base64url');
+    const encodedPayload = Buffer.from(payloadString).toString('base64url');
     const sign = createSign('SHA256');
     sign.write(encodedHeader + '.' + encodedPayload);
     sign.end();
     const signature = sign.sign(privateKey, 'base64url');
-    const token = encodedHeader + '.' + encodedPayload + '.' + signature;
-    return token;
+
+    return `${encodedHeader}.${encodedPayload}.${signature}`;
   },
 
   verify: (publicKey, token) => {
@@ -38,6 +37,7 @@ export const jwt = {
       Buffer.from(encodedPayload, 'base64url').toString('utf-8'),
     );
     if (jwtPayload.exp < Date.now()) throw exception.unauthorized();
+
     return jwtPayload;
   },
 };
