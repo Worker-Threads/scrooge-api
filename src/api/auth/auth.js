@@ -26,12 +26,12 @@ export const init = ({ authService }) => ({
 
   verify: {
     method: 'get',
-    access: 'none',
+    access: 'common',
     schema: schemas.verify,
-    handler: (_session, request) => {
-      const { headers } = request;
+    handler: (session, request) => {
+      const { user } = session;
 
-      return authService.verify(headers.authorization);
+      return user;
     },
   },
 });

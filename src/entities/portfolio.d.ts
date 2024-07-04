@@ -4,6 +4,5 @@ export interface Portfolio {
   id: number;
   userId: number;
   type: PortfolioType;
-  username: string;
-  password: string;
+  title: string;
 }

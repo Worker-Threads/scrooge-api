@@ -16,7 +16,7 @@ export const init = ({ services, apis }) => {
       const { access, method, params, schema, handler } = endpoint;
       const urlParams = params?.length ? `/:${params.join(':/')}` : '';
       const path = `/${service}/${route}${urlParams}`;
-      const opts = { schema: schema.properties };
+      const opts = { schema: { tags: [service], ...schema.properties } };
 
       server[method](path, opts, async (request, reply) => {
         const session =
