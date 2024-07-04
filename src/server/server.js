@@ -28,7 +28,7 @@ export const init = (apis) => {
     }
   }
 
-  server.listen({ port: config.server.port, host: '0.0.0.0' }, () => {
+  server.listen(config.server, () => {
     console.log(`Listening on ${config.server.port}...`);
   });
 };
