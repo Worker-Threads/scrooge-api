@@ -1,29 +1,11 @@
-import type { User } from '../entities/user.d.ts';
-import type { Session } from '../services/auth/types.d.ts';
-
-export interface Env {
-  requireEnv: (env: string) => string;
-}
-
-export interface Exception {
-  badRequest(message?: string): void;
-  unauthorized(message?: string): void;
-  forbidden(message?: string): void;
-  notFound(message?: string): void;
-}
-
-export interface Passwords {
-  hash(password: string): string;
-  compare(password: string, hash: string): boolean;
-}
-
-export interface Sessions {
-  generate(payload: User): Session;
-  validate(token: string): any;
-}
+import type { Env } from './env/types.d.ts';
+import type { Sessions } from './session/types.d.ts';
+import type { Exception } from './exception/types.d.ts';
+import type { Passwords } from './passwords/types.d.ts';
 
 export interface Utils {
   env: Env;
+  sessions: Sessions;
   exception: Exception;
   passwords: Passwords;
 }

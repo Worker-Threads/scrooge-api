@@ -1,6 +1,6 @@
-import { exception, ApiError } from '../../utils/exception.js';
-import { passwords } from '../../utils/passwords.js';
-import { sessions } from '../../utils/session.js';
+import { ApiError } from '../../utils/exception/exception.js';
+import { utils } from '../../utils/main.js';
+const { passwords, sessions, exception } = utils;
 
 /** @type {import('./types.d.ts').init} */
 export const init = ({ userRepo }) => ({

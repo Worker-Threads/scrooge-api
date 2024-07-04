@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-/** @type {import('./types').Passwords} */
+/** @type {import('./types.d.ts').Passwords} */
 export const passwords = {
   hash: (password) => {
     const salt = crypto.randomBytes(16).toString('hex');

@@ -1,4 +1,4 @@
-/** @type {import('./types').Env} */
+/** @type {import('./types.d.ts').Env} */
 export const env = {
   requireEnv: (name) => {
     const env = process.env[name];
