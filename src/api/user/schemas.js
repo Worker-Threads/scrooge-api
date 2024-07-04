@@ -11,3 +11,19 @@ export const user = /** @type {const} */ ({
   },
   required: ['params'],
 });
+
+export const me = /** @type {const} */ ({
+  type: 'object',
+  properties: {
+    headers: {
+      type: 'object',
+      properties: {
+        authorization: {
+          type: 'string',
+        },
+      },
+      required: ['authorization'],
+    },
+  },
+  required: ['headers'],
+});

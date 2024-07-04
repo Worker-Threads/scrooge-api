@@ -7,8 +7,8 @@ import { init as servicesInit } from './services/main.js';
 import { init as apisInit } from './api/main.js';
 import { init as serverInit } from './server/server.js';
 
-const pool = pgPoolInit(config.pg);
+const pool = await pgPoolInit(config.pg);
 const repos = reposInit(pool);
 const services = servicesInit(repos);
-const api = apisInit(services);
-serverInit(api);
+const apis = apisInit(services);
+serverInit({ services, apis });

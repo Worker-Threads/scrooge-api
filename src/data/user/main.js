@@ -4,7 +4,6 @@ import { create, selectOne } from './sql.js';
 export const init = (pool) => ({
   findById: async (id) => {
     const { query, params } = selectOne({ id });
-    console.log({ query, params });
 
     const {
       rows: [user],

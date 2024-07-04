@@ -10,21 +10,22 @@ for (const plugin of plugins)
   await server.register(plugin.plugin, plugin.options);
 
 /** @type {init} */
-export const init = (apis) => {
+export const init = ({ services, apis }) => {
   for (const [service, api] of Object.entries(apis)) {
     for (const [route, endpoint] of Object.entries(api)) {
       const { access, method, params, schema, handler } = endpoint;
       const urlParams = params?.length ? `/:${params.join(':/')}` : '';
       const path = `/${service}/${route}${urlParams}`;
       const opts = { schema: schema.properties };
-      const session =
-        access !== 'none'
-          ? {
-              /* Here some session handling  */
-            }
-          : null;
 
-      server[method](path, opts, (request, reply) => handler(session, request));
+      server[method](path, opts, async (request, reply) => {
+        const session =
+          access !== 'none'
+            ? await services.auth.verify(request.headers.authorization, access)
+            : null;
+
+        return handler(session, request);
+      });
     }
   }
 

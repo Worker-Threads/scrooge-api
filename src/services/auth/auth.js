@@ -30,8 +30,6 @@ export const init = ({ userRepo }) => ({
 
   verify: async (token, access = 'common') => {
     try {
-      if (access === 'none') return { user: {}, token: '' };
-
       if (!token) throw exception.unauthorized('No token provided.');
       const payload = await sessions.validate(token);
       if (!payload.id) throw exception.unauthorized('Invalid token payload.');

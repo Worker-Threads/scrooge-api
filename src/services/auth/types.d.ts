@@ -2,7 +2,7 @@ import type { User } from '../../entities/user.d.ts';
 import type { UserRepo } from '../../data/user/types.d.ts';
 
 export interface Session {
-  user: Partial<User>;
+  user: User;
   token: string;
 }
 
@@ -17,7 +17,7 @@ interface AuthService {
     username: string,
     password: string,
   ) => Promise<Session>;
-  verify: (token: string, access?: 'none' | 'common') => Promise<Session>;
+  verify: (token?: string, access?: 'none' | 'common') => Promise<Session>;
 }
 
 export function init(deps: Deps): AuthService;
