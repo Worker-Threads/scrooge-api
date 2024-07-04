@@ -1,24 +1,10 @@
-export const greet = /** @type {const} */ ({
-  type: 'object',
-  properties: {
-    query: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-      },
-      required: ['name'],
-    },
-  },
-  required: ['query'],
-});
-
-export const getById = /** @type {const} */ ({
+export const user = /** @type {const} */ ({
   type: 'object',
   properties: {
     params: {
       type: 'object',
       properties: {
-        id: { type: 'number' },
+        id: { type: 'integer' },
       },
       required: ['id'],
     },

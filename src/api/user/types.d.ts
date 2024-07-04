@@ -4,12 +4,10 @@ import type { User } from '../../entities/user.d.ts';
 import type { UserService } from '../../services/user/types.js';
 import * as schemas from './schemas.js';
 
-type GreetParam = SchemaType.FromSchema<typeof schemas.greet>;
-type GetByIdParam = SchemaType.FromSchema<typeof schemas.getById>;
+type UserByIdParam = SchemaType.FromSchema<typeof schemas.user>;
 
 export interface UserApi extends API {
-  greet: Endpoint<GreetParam, string>;
-  getById: Endpoint<GetByIdParam, Promise<User>>;
+  user: Endpoint<UserByIdParam, Promise<User>>;
 }
 
 interface Deps {

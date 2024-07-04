@@ -4,8 +4,8 @@ export const signIn = /** @type {const} */ ({
     body: {
       type: 'object',
       properties: {
-        email: { type: 'string' },
-        password: { type: 'string' },
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string', minLength: 6 },
       },
       required: ['email', 'password'],
     },
@@ -19,9 +19,9 @@ export const signUp = /** @type {const} */ ({
     body: {
       type: 'object',
       properties: {
-        email: { type: 'string' },
-        username: { type: 'string' },
-        password: { type: 'string' },
+        email: { type: 'string', format: 'email' },
+        username: { type: 'string', minLength: 8 },
+        password: { type: 'string', minLength: 6 },
       },
       required: ['email', 'username', 'password'],
     },

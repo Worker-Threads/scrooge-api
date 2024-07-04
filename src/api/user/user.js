@@ -2,22 +2,11 @@ import * as schemas from './schemas.js';
 
 /** @type {import('./types').init} */
 export const init = ({ userService }) => ({
-  greet: {
-    method: 'get',
-    access: 'none',
-    schema: schemas.greet,
-    handler: (_session, request) => {
-      const { name } = request.query;
-
-      return `Hello ${name}!`;
-    },
-  },
-
-  getById: {
+  user: {
     method: 'get',
     access: 'none',
     params: ['id'],
-    schema: schemas.getById,
+    schema: schemas.user,
     handler: (_session, request) => {
       const { id } = request.params;
 
