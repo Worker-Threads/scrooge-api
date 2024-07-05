@@ -1,4 +1,3 @@
-// main.ts
 import { create, selectOne, update, deleteOne } from './sql.js';
 
 /** @type {import('./types.d.ts').init} */
@@ -33,7 +32,7 @@ export const init = (pool) => ({
     return updatedPortfolio;
   },
 
-  delete: async (id) => {
+  remove: async (id) => {
     const { query, params } = deleteOne(id);
 
     const { rowCount } = await pool.query(query, params);

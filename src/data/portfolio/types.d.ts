@@ -8,7 +8,7 @@ export class PortfolioRepo {
     portfolio: Partial<Pick<Portfolio, 'type' | 'title'>>,
   ) => Promise<Portfolio>;
   findOne: (definition: Partial<Portfolio>) => Promise<Portfolio | null>;
-  delete: (id: number) => Promise<{ removed: boolean }>;
+  remove: (id: number) => Promise<{ removed: boolean }>;
 }
 
 export function init(pg: Pool): PortfolioRepo;

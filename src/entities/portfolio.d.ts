@@ -1,4 +1,6 @@
-export type PortfolioType = 'crypto' | 'etf' | 'stock' | 'fiat' | 'mixed';
+import type { AssetType } from '../types.d.ts';
+
+export type PortfolioType = AssetType | 'mixed';
 
 export interface Portfolio {
   id: number;

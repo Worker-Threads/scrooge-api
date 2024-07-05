@@ -11,6 +11,7 @@ export const create = /** @type {const} */ ({
         title: { type: 'string', minLength: 1, maxLength: 255 },
       },
       required: ['type', 'title'],
+      additionalProperties: false,
     },
     headers: {
       type: 'object',
@@ -63,6 +64,7 @@ export const update = /** @type {const} */ ({
         },
         title: { type: 'string', maxLength: 255 },
       },
+      additionalProperties: false,
     },
     headers: {
       type: 'object',

@@ -3,6 +3,7 @@ import type { Session } from '../services/auth/types.d.ts';
 import type { UserApi } from './user/types.d.ts';
 import type { AuthApi } from './auth/types.d.ts';
 import type { PortfolioApi } from './portfolio/types.d.ts';
+import type { TransactionApi } from './transaction/types.d.ts';
 
 export interface Endpoint<
   Params,
@@ -39,6 +40,7 @@ export interface APIs extends Record<string, API> {
   auth: AuthApi;
   user: UserApi;
   portfolio: PortfolioApi;
+  transaction: TransactionApi;
 }
 
 export function init(services: Services): APIs;

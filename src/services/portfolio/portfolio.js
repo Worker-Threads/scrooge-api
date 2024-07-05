@@ -36,6 +36,6 @@ export const init = ({ portfolioRepo }) => ({
     if (!portfolio) throw exception.notFound();
     if (portfolio.userId !== userId) throw exception.forbidden();
 
-    return portfolioRepo.delete(id);
+    return portfolioRepo.remove(id);
   },
 });
