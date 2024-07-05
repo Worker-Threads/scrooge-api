@@ -1,3 +1,5 @@
+import { authHeaders } from '../schemaParts.js';
+
 export const signIn = /** @type {const} */ ({
   type: 'object',
   properties: {
@@ -34,15 +36,7 @@ export const signUp = /** @type {const} */ ({
 export const verify = /** @type {const} */ ({
   type: 'object',
   properties: {
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: {
-          type: 'string',
-        },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['headers'],
 });

@@ -1,3 +1,5 @@
+import { authHeaders } from '../schemaParts.js';
+
 export const create = /** @type {const} */ ({
   type: 'object',
   properties: {
@@ -31,13 +33,7 @@ export const create = /** @type {const} */ ({
       oneOf: [{ required: ['ticker'] }, { required: ['currency'] }],
       additionalProperties: false,
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['body', 'headers'],
 });
@@ -72,13 +68,7 @@ export const update = /** @type {const} */ ({
       required: ['type'],
       additionalProperties: false,
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['params', 'body', 'headers'],
 });
@@ -86,13 +76,7 @@ export const update = /** @type {const} */ ({
 export const getForUser = /** @type {const} */ ({
   type: 'object',
   properties: {
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['headers'],
 });
@@ -107,13 +91,7 @@ export const getByPortfolio = /** @type {const} */ ({
       },
       required: ['portfolioId'],
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['params', 'headers'],
 });
@@ -139,13 +117,7 @@ export const remove = /** @type {const} */ ({
       required: ['type'],
       additionalProperties: false,
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['params', 'headers', 'body'],
 });

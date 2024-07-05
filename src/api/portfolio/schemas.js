@@ -1,3 +1,5 @@
+import { authHeaders } from '../schemaParts.js';
+
 export const create = /** @type {const} */ ({
   type: 'object',
   properties: {
@@ -13,13 +15,7 @@ export const create = /** @type {const} */ ({
       required: ['type', 'title'],
       additionalProperties: false,
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['body', 'headers'],
 });
@@ -34,13 +30,7 @@ export const portfolio = /** @type {const} */ ({
       },
       required: ['id'],
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['params', 'headers'],
 });
@@ -66,13 +56,7 @@ export const update = /** @type {const} */ ({
       },
       additionalProperties: false,
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['params', 'body', 'headers'],
 });
@@ -87,13 +71,7 @@ export const remove = /** @type {const} */ ({
       },
       required: ['id'],
     },
-    headers: {
-      type: 'object',
-      properties: {
-        authorization: { type: 'string' },
-      },
-      required: ['authorization'],
-    },
+    headers: authHeaders,
   },
   required: ['params', 'headers'],
 });
