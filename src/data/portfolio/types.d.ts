@@ -7,7 +7,7 @@ export class PortfolioRepo {
     id: number,
     portfolio: Partial<Pick<Portfolio, 'type' | 'title'>>,
   ) => Promise<Portfolio>;
-  findOne: (definition: Partial<Portfolio>) => Promise<Portfolio>;
+  findOne: (definition: Partial<Portfolio>) => Promise<Portfolio | null>;
   delete: (id: number) => Promise<{ removed: boolean }>;
 }
 
