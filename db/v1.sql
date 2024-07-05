@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS "user"."portfolio" (
   "id" SERIAL,
   "userId" INT NOT NULL REFERENCES "user"."user"("id"),
 	"type" "user"."asset_type" NOT NULL,
+  "title" VARCHAR(255) NOT NULL,
 	PRIMARY KEY ("id")
 );
 

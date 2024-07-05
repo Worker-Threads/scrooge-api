@@ -5,6 +5,7 @@ import type {
   UnprotectedEndpoint,
 } from '../types.d.ts';
 import type { AuthService, Session } from '../../services/auth/types.js';
+import type { User } from '../../entities/user.d.ts';
 import * as schemas from './schemas.js';
 
 type SignInParam = SchemaType.FromSchema<typeof schemas.signIn>;
@@ -14,7 +15,7 @@ type VerifyParam = SchemaType.FromSchema<typeof schemas.verify>;
 export interface AuthApi extends API {
   signIn: UnprotectedEndpoint<SignInParam, Promise<Session>>;
   signUp: UnprotectedEndpoint<SignUpParam, Promise<Session>>;
-  verify: ProtectedEndpoint<VerifyParam, Promise<Session>>;
+  verify: ProtectedEndpoint<VerifyParam, User>;
 }
 
 interface Deps {
