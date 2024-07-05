@@ -1,5 +1,6 @@
-import type { User } from '../../entities/user.d.ts';
 import type { AssetType } from '../../types.d.ts';
+import type { User } from '../../entities/user.d.ts';
+import type { Portfolio } from '../../entities/portfolio.d.ts';
 import type {
   GeneralTransaction,
   GeneralTransactionWithType,
@@ -43,3 +44,9 @@ export interface TransactionService {
 }
 
 export function init(deps: Deps): TransactionService;
+
+export function checkPortfolioAccess(
+  user: User,
+  portfolio: Portfolio | null,
+  type?: AssetType,
+): void;

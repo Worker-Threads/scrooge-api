@@ -13,8 +13,9 @@ export const init = ({ portfolioRepo }) => ({
     const { id, ...rest } = definition;
 
     const portfolio = await portfolioRepo.findOne({ id });
-    if (!portfolio) throw exception.notFound();
-    if (portfolio.userId !== userId) throw exception.forbidden();
+    if (!portfolio) throw exception.notFound('Portfolio not found');
+    if (portfolio.userId !== userId)
+      throw exception.forbidden('User has no access to this portfolio');
 
     return portfolioRepo.update(id, rest);
   },
@@ -23,8 +24,9 @@ export const init = ({ portfolioRepo }) => ({
     const { id: userId } = user;
 
     const portfolio = await portfolioRepo.findOne(definition);
-    if (!portfolio) throw exception.notFound();
-    if (portfolio.userId !== userId) throw exception.forbidden();
+    if (!portfolio) throw exception.notFound('Portfolio not found');
+    if (portfolio.userId !== userId)
+      throw exception.forbidden('User has no access to this portfolio');
 
     return portfolio;
   },
@@ -33,8 +35,9 @@ export const init = ({ portfolioRepo }) => ({
     const { id: userId } = user;
 
     const portfolio = await portfolioRepo.findOne({ id });
-    if (!portfolio) throw exception.notFound();
-    if (portfolio.userId !== userId) throw exception.forbidden();
+    if (!portfolio) throw exception.notFound('Portfolio not found');
+    if (portfolio.userId !== userId)
+      throw exception.forbidden('User has no access to this portfolio');
 
     return portfolioRepo.remove(id);
   },

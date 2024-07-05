@@ -3,26 +3,36 @@ import { exception } from '../../utils/exception/exception.js';
 /** @type {import('../../types.d.ts').AssetType[]} */
 const allAssetTypes = ['crypto', 'etf', 'fiat', 'stock'];
 
+/** @type {import('./types.d.ts').checkPortfolioAccess}*/
+const checkPortfolioAccess = (user, portfolio, type) => {
+  if (!portfolio) throw exception.notFound('Portfolio not found');
+
+  if (portfolio.userId !== user.id)
+    throw exception.forbidden('User has no access to this portfolio');
+
+  if (type && portfolio.type !== 'mixed' && portfolio.type !== type)
+    throw exception.badRequest(
+      `Type "${type}" is not assignable to portfolio with type ${portfolio.type}`,
+    );
+};
+
 /** @type {import('./types.d.ts').init} */
 export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
   create: async (type, user, definition) => {
-    const { id: userId } = user;
     const { portfolioId } = definition;
 
     const portfolio = await portfolioRepo.findOne({
       id: portfolioId,
     });
 
-    if (!portfolio) throw exception.notFound();
-    if (portfolio.userId !== userId) throw exception.forbidden();
-    if (portfolio.type !== 'mixed' && portfolio.type !== type)
-      throw exception.badRequest();
+    checkPortfolioAccess(user, portfolio, type);
 
     const identifier = definition.currency ?? definition.ticker;
-    if (!identifier) throw exception.badRequest();
+    if (!identifier)
+      throw exception.badRequest('Ticker or currency must be provided');
 
     const tickers = await tickerRepo.getBySymbol(type, identifier);
-    if (!tickers.length) throw exception.notFound();
+    if (!tickers.length) throw exception.notFound('Ticker not found');
 
     const created = await transactionRepo.create(type, definition);
 
@@ -30,17 +40,16 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
   },
 
   update: async (type, user, definition) => {
-    const { id: userId } = user;
     const { id, ...rest } = definition;
 
     const transaction = await transactionRepo.findById(type, id);
-    if (!transaction) throw exception.notFound();
+    if (!transaction) throw exception.notFound('Transaction not found');
 
     const portfolio = await portfolioRepo.findOne({
       id: transaction.portfolioId,
     });
-    if (!portfolio) throw exception.notFound();
-    if (portfolio.userId !== userId) throw exception.forbidden();
+
+    checkPortfolioAccess(user, portfolio, type);
 
     const updated = await transactionRepo.update(type, id, rest);
 
@@ -68,9 +77,10 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
     const portfolio = await portfolioRepo.findOne({
       id: portfolioId,
     });
-    if (!portfolio) throw exception.notFound();
-    if (portfolio.userId !== userId) throw exception.forbidden();
 
+    checkPortfolioAccess(user, portfolio);
+
+    // @ts-ignore for "portfolio is possibly null" error. It can't be null. See checkPortfolioAccess
     const types = portfolio.type === 'mixed' ? allAssetTypes : [portfolio.type];
 
     const promises = types.map(async (type) => {
@@ -86,16 +96,14 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
   },
 
   remove: async (type, user, id) => {
-    const { id: userId } = user;
-
     const transaction = await transactionRepo.findById(type, id);
-    if (!transaction) throw exception.notFound();
+    if (!transaction) throw exception.notFound('Transaction not found');
 
     const portfolio = await portfolioRepo.findOne({
       id: transaction.portfolioId,
     });
-    if (!portfolio) throw exception.notFound();
-    if (portfolio.userId !== userId) throw exception.forbidden();
+
+    checkPortfolioAccess(user, portfolio);
 
     return transactionRepo.remove(type, id);
   },
