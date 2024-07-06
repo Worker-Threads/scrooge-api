@@ -9,19 +9,7 @@ export const init = ({ userService }) => ({
     handler: (session, request) => {
       const { user } = session;
 
-      return user;
-    },
-  },
-
-  user: {
-    method: 'get',
-    access: 'none',
-    params: ['id'],
-    schema: schemas.user,
-    handler: (_session, request) => {
-      const { id } = request.params;
-
-      return userService.findById(id);
+      return userService.findById(user.id);
     },
   },
 });
