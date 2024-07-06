@@ -23,7 +23,7 @@ export const signUp = /** @type {const} */ ({
       type: 'object',
       properties: {
         email: { type: 'string', format: 'email' },
-        username: { type: 'string', minLength: 8 },
+        username: { type: 'string', minLength: 5 },
         password: { type: 'string', minLength: 6 },
       },
       required: ['email', 'username', 'password'],

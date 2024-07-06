@@ -132,3 +132,6 @@ dist
 # RS256 keys
 private.pem
 public.pem
+
+# macOS
+.DS_store
