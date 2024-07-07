@@ -34,7 +34,6 @@ export const init = (pool) => ({
 
   remove: async (id) => {
     const { query, params } = deleteOne(id);
-
     const { rowCount } = await pool.query(query, params);
     const removed = (rowCount ?? 0) > 0;
 

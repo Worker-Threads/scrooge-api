@@ -7,7 +7,7 @@ interface Deps {
 }
 
 export interface TickerService {
-  list: (type: AssetType) => Promise<Ticker[]>;
+  list: (type: AssetType, keyword: string, limit?: number) => Promise<Ticker[]>;
 }
 
 export function init(deps: Deps): TickerService;

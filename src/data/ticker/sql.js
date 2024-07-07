@@ -1,9 +1,11 @@
-/** @typedef {import('../../entities/transaction').GeneralTransaction} GeneralTransaction */
-/** @typedef {import('../../types').AssetType} AssetType */
+/**
+ * @typedef {import('../../entities/transaction').GeneralTransaction} GeneralTransaction
+ * @typedef {import('../../types').AssetType} AssetType
+ */
 
 /**
  * @param {AssetType} schema
- * @returns {string | null}
+ * @returns {'ticker' | 'currency' | null}
  */
 const resolveTableName = (schema) => {
   const tickerSchemas = ['crypto', 'etf', 'stock'];
@@ -18,29 +20,28 @@ const resolveTableName = (schema) => {
 
 /**
  * @param {AssetType} schema
- * @returns {{ query: string }}
- */
-export const getList = (schema) => {
-  const table = resolveTableName(schema);
-  const query = `SELECT * FROM "${schema}"."${table}";`;
-
-  return { query };
-};
-
-/**
- * @param {AssetType} schema
  * @param {string} symbol
+ * @param {number} [limit]
  * @returns {{ query: string, params: any[] }}
  */
-export const selectBySymbol = (schema, symbol) => {
+export const selectBySymbol = (schema, symbol, limit) => {
   const table = resolveTableName(schema);
 
-  const query = `
+  let query = `
     SELECT * FROM "${schema}"."${table}"
-    WHERE "symbol" = $1;
+    WHERE REPLACE(LOWER("symbol"), ' ', '') LIKE LOWER($1)
   `;
 
-  const params = [symbol];
+  const orderBy = table === 'currency' ? '"symbol"' : '"marketCap" DESC';
+  query += `ORDER BY ${orderBy} `;
+
+  /** @type {any[]} */
+  const params = [`${symbol}%`];
+
+  if (limit) {
+    query += 'LIMIT $2';
+    params.push(limit);
+  }
 
   return { query, params };
 };

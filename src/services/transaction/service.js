@@ -31,7 +31,7 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
     if (!identifier)
       throw exception.badRequest('Ticker or currency must be provided');
 
-    const tickers = await tickerRepo.getBySymbol(type, identifier);
+    const tickers = await tickerRepo.searchBySymbol(type, identifier);
     if (!tickers.length) throw exception.notFound('Ticker not found');
 
     const created = await transactionRepo.create(type, definition);

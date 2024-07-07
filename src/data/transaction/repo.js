@@ -34,7 +34,6 @@ export const init = (pool) => ({
 
   findForUser: async (schema, userId, portfolioId) => {
     const { query, params } = selectForUser(userId, schema, portfolioId);
-
     const { rows } = await pool.query(query, params);
 
     return rows;
@@ -42,7 +41,6 @@ export const init = (pool) => ({
 
   remove: async (schema, id) => {
     const { query, params } = remove(schema, id);
-
     const { rowCount } = await pool.query(query, params);
     const removed = (rowCount ?? 0) > 0;
 

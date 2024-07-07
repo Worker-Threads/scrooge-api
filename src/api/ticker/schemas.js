@@ -14,7 +14,19 @@ export const tickers = /** @type {const} */ ({
       required: ['type'],
       additionalProperties: false,
     },
+    query: {
+      type: 'object',
+      properties: {
+        keyword: {
+          type: 'string',
+        },
+        limit: {
+          type: 'integer',
+        },
+      },
+      required: ['keyword'],
+    },
     headers: authHeaders,
   },
-  required: ['params', 'headers'],
+  required: ['params', 'query', 'headers'],
 });

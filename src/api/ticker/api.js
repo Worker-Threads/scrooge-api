@@ -9,8 +9,9 @@ export const init = ({ tickerService }) => ({
     schema: schemas.tickers,
     handler: (session, request) => {
       const { type } = request.params;
+      const { keyword, limit } = request.query;
 
-      return tickerService.list(type);
+      return tickerService.list(type, keyword, limit);
     },
   },
 });
