@@ -3,18 +3,37 @@
 
 /**
  * @param {AssetType} schema
- * @param {string} symbol
- * @returns {{ query: string, params: any[] }}
+ * @returns {string | null}
  */
-export const selectBySymbol = (schema, symbol) => {
+const resolveTableName = (schema) => {
   const tickerSchemas = ['crypto', 'etf', 'stock'];
   const currencySchemas = ['fiat'];
 
-  const table = tickerSchemas.includes(schema)
+  return tickerSchemas.includes(schema)
     ? 'ticker'
     : currencySchemas.includes(schema)
       ? 'currency'
       : null;
+};
+
+/**
+ * @param {AssetType} schema
+ * @returns {{ query: string }}
+ */
+export const getList = (schema) => {
+  const table = resolveTableName(schema);
+  const query = `SELECT * FROM "${schema}"."${table}";`;
+
+  return { query };
+};
+
+/**
+ * @param {AssetType} schema
+ * @param {string} symbol
+ * @returns {{ query: string, params: any[] }}
+ */
+export const selectBySymbol = (schema, symbol) => {
+  const table = resolveTableName(schema);
 
   const query = `
     SELECT * FROM "${schema}"."${table}"
