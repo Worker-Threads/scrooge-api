@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer';
 import { createSign, createVerify } from 'node:crypto';
-import { exception } from '../exception/exception.js';
+import { exception } from '../exception/util.js';
 
-/** @type {import('./types.d.ts').Jwt} */
+/** @type {import('./types.js').Jwt} */
 export const jwt = {
   headerObject: {
     alg: 'RS256',

@@ -1,7 +1,7 @@
-import { init as userRepoInit } from './user/main.js';
-import { init as portfolioRepoInit } from './portfolio/main.js';
-import { init as tickerRepoInit } from './ticker/main.js';
-import { init as transactionRepoInit } from './transaction/main.js';
+import { init as userRepoInit } from './user/repo.js';
+import { init as portfolioRepoInit } from './portfolio/repo.js';
+import { init as tickerRepoInit } from './ticker/repo.js';
+import { init as transactionRepoInit } from './transaction/repo.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (pool) => {

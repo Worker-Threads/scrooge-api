@@ -1,7 +1,7 @@
-import { init as authApiInit } from './auth/auth.js';
-import { init as userApiInit } from './user/user.js';
-import { init as portfolioApiInit } from './portfolio/portfolio.js';
-import { init as transactionApiInit } from './transaction/transaction.js';
+import { init as authApiInit } from './auth/api.js';
+import { init as userApiInit } from './user/api.js';
+import { init as portfolioApiInit } from './portfolio/api.js';
+import { init as transactionApiInit } from './transaction/api.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (services) => {

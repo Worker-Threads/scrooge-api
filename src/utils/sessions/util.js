@@ -3,11 +3,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { jwt } from './jwt.js';
 import { config } from '../../config.js';
-import { exception } from '../exception/exception.js';
+import { exception } from '../exception/util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/** @type {import('./types.d.ts').Sessions} */
+/** @type {import('./types.js').Sessions} */
 export const sessions = {
   generate: async (user) => {
     const { id } = user;

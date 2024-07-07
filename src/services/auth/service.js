@@ -1,6 +1,6 @@
-import { sessions } from '../../utils/session/session.js';
-import { exception } from '../../utils/exception/exception.js';
-import { passwords } from '../../utils/passwords/passwords.js';
+import { sessions } from '../../utils/sessions/util.js';
+import { exception } from '../../utils/exception/util.js';
+import { passwords } from '../../utils/passwords/util.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = ({ userRepo }) => ({

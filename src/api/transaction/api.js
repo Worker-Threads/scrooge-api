@@ -1,6 +1,6 @@
 import * as schemas from './schemas.js';
 
-/** @type {import('./types').init} */
+/** @type {import('./types.js').init} */
 export const init = ({ transactionService }) => ({
   create: {
     method: 'post',

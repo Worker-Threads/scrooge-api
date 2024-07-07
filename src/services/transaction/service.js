@@ -1,4 +1,4 @@
-import { exception } from '../../utils/exception/exception.js';
+import { exception } from '../../utils/exception/util.js';
 
 /** @type {import('../../types.d.ts').AssetType[]} */
 const allAssetTypes = ['crypto', 'etf', 'fiat', 'stock'];

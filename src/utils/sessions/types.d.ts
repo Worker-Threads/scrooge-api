@@ -1,5 +1,5 @@
-import type { User } from '../../entities/user.d.ts';
-import type { Session } from '../../services/auth/types.d.ts';
+import type { User } from '../../entities/user.js';
+import type { Session } from '../../services/auth/types.js';
 
 interface TokenPayload {
   id: number;

@@ -1,7 +1,7 @@
-import { init as authServiceInit } from './auth/auth.js';
-import { init as userServiceInit } from './user/user.js';
-import { init as portfolioServiceInit } from './portfolio/portfolio.js';
-import { init as transactionServiceInit } from './transaction/transaction.js';
+import { init as authServiceInit } from './auth/service.js';
+import { init as userServiceInit } from './user/service.js';
+import { init as portfolioServiceInit } from './portfolio/service.js';
+import { init as transactionServiceInit } from './transaction/service.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (repos) => {

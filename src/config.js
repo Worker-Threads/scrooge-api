@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { env } from './utils/env/env.js';
+import { env } from './utils/env/util.js';
 
 export const config = {
   server: {
