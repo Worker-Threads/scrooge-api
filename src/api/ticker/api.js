@@ -7,11 +7,18 @@ export const init = ({ tickerService }) => ({
     access: 'common',
     params: ['type'],
     schema: schemas.tickers,
-    handler: (session, request) => {
+    handler: async (session, request) => {
       const { type } = request.params;
       const { keyword, limit } = request.query;
 
-      return tickerService.list(type, keyword, limit);
+      const internal = await tickerService.list(type, keyword, limit);
+
+      if (internal.length)
+        return internal.map((i) => ({ ...i, internal: true }));
+
+      const external = await tickerService.externalList(type, keyword, limit);
+
+      return external.map((i) => ({ ...i, internal: false }));
     },
   },
 });

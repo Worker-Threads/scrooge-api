@@ -27,4 +27,8 @@ export const exception = {
   notFound(message = 'Not Found') {
     return new ApiError(404, message);
   },
+
+  serverError(message = 'Internal server error') {
+    return new ApiError(500, message);
+  },
 };

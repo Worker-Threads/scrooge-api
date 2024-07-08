@@ -8,6 +8,11 @@ interface Deps {
 
 export interface TickerService {
   list: (type: AssetType, keyword: string, limit?: number) => Promise<Ticker[]>;
+  externalList: (
+    type: AssetType,
+    keyword: string,
+    limit?: number,
+  ) => Promise<Ticker[]>;
 }
 
 export function init(deps: Deps): TickerService;

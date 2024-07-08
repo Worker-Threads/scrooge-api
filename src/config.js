@@ -6,6 +6,9 @@ export const config = {
     port: parseInt(process.env.PORT || '8080'),
     host: process.env.HOST || '0.0.0.0',
   },
+  collector: {
+    url: env.requireEnv('COLLECTOR_URL'),
+  },
   pg: {
     host: env.requireEnv('PG_HOST'),
     port: parseInt(env.requireEnv('PG_PORT')),
