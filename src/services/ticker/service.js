@@ -15,4 +15,12 @@ export const init = ({ tickerRepo }) => ({
 
     return data.slice(0, limit ?? 10);
   },
+
+  load: async (type, symbol) => {
+    const { url } = config.collector;
+    const response = await fetch(`${url}/${type}/loadTicker/${symbol}`);
+    if (response.status > 300) throw exception.serverError('Collector error.');
+
+    return response.json();
+  },
 });

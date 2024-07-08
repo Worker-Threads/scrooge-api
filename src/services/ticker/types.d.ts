@@ -13,6 +13,7 @@ export interface TickerService {
     keyword: string,
     limit?: number,
   ) => Promise<Ticker[]>;
+  load: (type: AssetType, symbol: string) => Promise<{ loaded: boolean }>;
 }
 
 export function init(deps: Deps): TickerService;

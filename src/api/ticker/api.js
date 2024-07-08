@@ -21,4 +21,17 @@ export const init = ({ tickerService }) => ({
       return external.map((i) => ({ ...i, internal: false }));
     },
   },
+
+  load: {
+    method: 'get',
+    access: 'common',
+    params: ['type'],
+    schema: schemas.load,
+    handler: async (session, request) => {
+      const { type } = request.params;
+      const { symbol } = request.query;
+
+      return tickerService.load(type, symbol);
+    },
+  },
 });
