@@ -4,7 +4,7 @@ import type {
   AggTransaction,
   TransactionRepo,
 } from '../../data/transaction/types.d.ts';
-import type { GroupCriteria } from './utils/types.d.ts';
+import type { GroupCriteria } from './helpers/types.d.ts';
 
 interface Deps {
   portfolioRepo: PortfolioRepo;
