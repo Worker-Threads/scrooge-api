@@ -4,6 +4,7 @@ import type { UserService } from './user/types.d.ts';
 import type { PortfolioService } from './portfolio/types.d.ts';
 import type { TickerService } from './ticker/types.d.ts';
 import type { TransactionService } from './transaction/types.d.ts';
+import type { AnalyticsService } from './analytics/types.d.ts';
 
 export interface Services {
   auth: AuthService;
@@ -11,6 +12,7 @@ export interface Services {
   portfolio: PortfolioService;
   ticker: TickerService;
   transaction: TransactionService;
+  analytics: AnalyticsService;
 }
 
 export function init(repos: Repos): Services;

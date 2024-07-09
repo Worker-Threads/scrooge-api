@@ -7,7 +7,7 @@
  * @param {AssetType} schema
  * @returns {'ticker' | 'currency' | null}
  */
-const resolveTableName = (schema) => {
+export const resolveTableName = (schema) => {
   const tickerSchemas = ['crypto', 'etf', 'stock'];
   const currencySchemas = ['fiat'];
 

@@ -1,9 +1,17 @@
-import { create, selectOne, update, deleteOne } from './sql.js';
+import { create, select, update, deleteOne } from './sql.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (pool) => ({
+  find: async (definition) => {
+    const { query, params } = select(definition);
+
+    const { rows } = await pool.query(query, params);
+
+    return rows;
+  },
+
   findOne: async (definition) => {
-    const { query, params } = selectOne(definition);
+    const { query, params } = select(definition);
 
     const {
       rows: [portfolio],

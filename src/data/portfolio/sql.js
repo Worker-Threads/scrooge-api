@@ -21,7 +21,7 @@ export const create = (definition) => {
  * @param {Partial<Portfolio>} definition
  * @returns {{ query: string, params: any[] }}
  */
-export const selectOne = (definition) => {
+export const select = (definition) => {
   const select = 'SELECT * from "user"."portfolio"';
   const where =
     ' WHERE ' +

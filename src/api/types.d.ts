@@ -5,6 +5,7 @@ import type { AuthApi } from './auth/types.d.ts';
 import type { PortfolioApi } from './portfolio/types.d.ts';
 import type { TickerApi } from './ticker/types.d.ts';
 import type { TransactionApi } from './transaction/types.d.ts';
+import type { AnalyticsApi } from './analytics/types.d.ts';
 
 export interface Endpoint<
   Params,
@@ -43,6 +44,7 @@ export interface APIs extends Record<string, API> {
   portfolio: PortfolioApi;
   ticker: TickerApi;
   transaction: TransactionApi;
+  analytics: AnalyticsApi;
 }
 
 export function init(services: Services): APIs;

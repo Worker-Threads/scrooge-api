@@ -1,4 +1,13 @@
-import { create, selectById, selectForUser, update, remove } from './sql.js';
+/** @typedef {import('../../types').AssetType} AssetType */
+
+import {
+  create,
+  selectById,
+  selectForUser,
+  update,
+  remove,
+  selectWithProfit,
+} from './sql.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (pool) => ({
@@ -45,5 +54,36 @@ export const init = (pool) => ({
     const removed = (rowCount ?? 0) > 0;
 
     return { removed };
+  },
+
+  getWithProfit: async (portfolioIds) => {
+    /** @type {AssetType[]} */
+    const assetTypes = ['crypto', 'etf', 'stock', 'fiat'];
+
+    const rowsArray = await Promise.all(
+      assetTypes.map((t) => {
+        const { query, params } = selectWithProfit(t, portfolioIds);
+
+        return pool.query(query, params);
+      }),
+    );
+
+    const transactions = rowsArray.flatMap(({ rows }, index) => {
+      const type = assetTypes[index];
+      return rows.map((row) => ({
+        ...row,
+        type,
+        ticker: row.ticker ?? row.currency,
+        entryVolume: +row.volume,
+        currentVolume: +row.currentVolume,
+        entryPrice: +row.price,
+        currentPrice: +row.currentPrice,
+        growth: +row.growth,
+        profit: +row.profit,
+        timestamp: new Date(row.timestamp).getTime(),
+      }));
+    });
+
+    return transactions;
   },
 });

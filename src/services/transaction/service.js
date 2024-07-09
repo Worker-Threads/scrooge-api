@@ -12,7 +12,7 @@ const checkPortfolioAccess = (user, portfolio, type) => {
 
   if (type && portfolio.type !== 'mixed' && portfolio.type !== type)
     throw exception.badRequest(
-      `Type "${type}" is not assignable to portfolio with type ${portfolio.type}`,
+      `Type "${type}" is not assignable to portfolio with type "${portfolio.type}"`,
     );
 };
 

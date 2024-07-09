@@ -1,6 +1,8 @@
 /** @typedef {import('../../entities/transaction').GeneralTransaction} GeneralTransaction */
 /** @typedef {import('../../types').AssetType} AssetType */
 
+import { resolveTableName } from '../ticker/sql.js';
+
 /**
  * @param {AssetType} schema
  * @param {number} id
@@ -83,18 +85,31 @@ export const create = (schema, transaction) => {
  * @returns {{ query: string, params: any[] }}
  */
 export const update = (schema, id, transaction) => {
-  const setClause = Object.keys(transaction)
-    .map((key, i) => `"${key}" = $${i + 1}`)
-    .join(', ');
+  const setClause = [];
+  /** @type {any[]} */
+  const params = [id];
+
+  if (transaction.volume) {
+    params.push(transaction.volume);
+    setClause.push(`"volume" = $${params.length}`);
+  }
+
+  if (transaction.timestamp) {
+    params.push(new Date(transaction.timestamp));
+    setClause.push(`"timestamp" = $${params.length}`);
+  }
+
+  if (transaction.price) {
+    params.push(transaction.price);
+    setClause.push(`"price" = $${params.length}`);
+  }
 
   const query = `
     UPDATE "${schema}"."transaction"
-    SET ${setClause}
-    WHERE "id" = $${Object.keys(transaction).length + 1}
+    SET ${setClause.join(',')}
+    WHERE "id" = $1
     RETURNING *;
   `;
-
-  const params = [...Object.values(transaction), id];
 
   return { query, params };
 };
@@ -114,4 +129,37 @@ export const remove = (schema, id) => {
   const params = [id];
 
   return { query, params };
+};
+
+/**
+ * @param {AssetType} schema
+ * @param {number[]} portfolioIds
+ * @returns {{ query: string, params: any[] }}
+ */
+export const selectWithProfit = (schema, portfolioIds) => {
+  const tcField = resolveTableName(schema);
+
+  // B - BAR_D, T - TRANSACTION
+  const rawGrowth = '(B.CLOSE - T.PRICE) / T.PRICE';
+
+  const lastBarTimestamp = `
+    SELECT MAX(BAR_INNER.TIMESTAMP)
+    FROM ${schema}.BAR_D BAR_INNER
+    WHERE BAR_INNER.${tcField} = T.${tcField}
+  `;
+
+  const query = `
+    SELECT
+      T.*,
+      B.CLOSE AS "currentPrice",
+      ${rawGrowth} * 100 AS "growth",
+      T.VOLUME * ${rawGrowth} AS "profit",
+      T.VOLUME * (1 + ${rawGrowth}) AS "currentVolume"
+    FROM ${schema}.TRANSACTION T
+    JOIN ${schema}.BAR_D B ON T.${tcField} = B.${tcField}
+    WHERE T."portfolioId" IN (${portfolioIds.join(',')})
+    AND B.TIMESTAMP = (${lastBarTimestamp});
+  `;
+
+  return { query, params: [] };
 };
