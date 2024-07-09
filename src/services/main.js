@@ -4,6 +4,7 @@ import { init as portfolioServiceInit } from './portfolio/service.js';
 import { init as tickerServiceInit } from './ticker/service.js';
 import { init as transactionServiceInit } from './transaction/service.js';
 import { init as analyticsServiceInit } from './analytics/service.js';
+import { init as barServiceInit } from './bar/service.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (repos) => {
@@ -24,6 +25,10 @@ export const init = (repos) => {
     portfolioRepo: repos.portfolio,
     transactionRepo: repos.transaction,
   });
+  const barService = barServiceInit({
+    tickerRepo: repos.ticker,
+    barRepo: repos.bar,
+  });
 
   return {
     user: userService,
@@ -32,5 +37,6 @@ export const init = (repos) => {
     ticker: tickerService,
     transaction: transactionService,
     analytics: analyticsService,
+    bar: barService,
   };
 };

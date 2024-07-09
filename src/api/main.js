@@ -4,6 +4,7 @@ import { init as portfolioApiInit } from './portfolio/api.js';
 import { init as tickerApiInit } from './ticker/api.js';
 import { init as transactionApiInit } from './transaction/api.js';
 import { init as analyticsApiInit } from './analytics/api.js';
+import { init as barApiInit } from './bar/api.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (services) => {
@@ -19,6 +20,9 @@ export const init = (services) => {
   const analyticsApi = analyticsApiInit({
     analyticsService: services.analytics,
   });
+  const barApi = barApiInit({
+    barService: services.bar,
+  });
 
   return {
     auth: authApi,
@@ -27,5 +31,6 @@ export const init = (services) => {
     ticker: tickerApi,
     transaction: transactionApi,
     analytics: analyticsApi,
+    bar: barApi,
   };
 };
