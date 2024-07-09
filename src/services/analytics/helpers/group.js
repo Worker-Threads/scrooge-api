@@ -6,9 +6,12 @@
  */
 
 /** @type {GroupByDefault} */
-export const groupByDefault = (field, transactions) => {
+export const groupByDefault = (transactions, opts) => {
+  const { identifierField, resolveIdentifier, resolveValue } = opts;
+
   const rawGroupMap = transactions.reduce((groupMap, transaction) => {
-    const identifier = transaction[field];
+    const identifier = resolveIdentifier(transaction);
+
     if (!groupMap[identifier])
       groupMap[identifier] = { entryVolume: 0, currentVolume: 0, profit: 0 };
 
@@ -24,7 +27,7 @@ export const groupByDefault = (field, transactions) => {
     const growth = ((currentVolume - entryVolume) / entryVolume) * 100;
 
     return {
-      [field]: key,
+      [identifierField]: resolveValue(key),
       entryVolume,
       currentVolume,
       growth,
@@ -34,8 +37,8 @@ export const groupByDefault = (field, transactions) => {
 };
 
 /** @type {GroupByPortfolio} */
-export const groupByPortfolio = (transactions, { portfolios }) => {
-  const grouped = groupByDefault('portfolioId', transactions);
+export const groupByPortfolio = (transactions, { portfolios, ...opts }) => {
+  const grouped = groupByDefault(transactions, opts);
 
   /** @type {Record<number, string>} */
   const portfolioTitles = portfolios.reduce(
@@ -53,14 +56,35 @@ export const groupByPortfolio = (transactions, { portfolios }) => {
 /** @type {GroupFunctionMap} */
 export const groupFunctionMap = {
   portfolio: (transactions, { portfolios }) => {
-    return groupByPortfolio(transactions, { portfolios });
+    return groupByPortfolio(transactions, {
+      identifierField: 'portfolioId',
+      resolveIdentifier: (t) => t.portfolioId,
+      resolveValue: (i) => i,
+      portfolios,
+    });
   },
 
   asset: (transactions) => {
-    return groupByDefault('ticker', transactions);
+    return groupByDefault(transactions, {
+      identifierField: 'ticker',
+      resolveIdentifier: (t) => t.ticker,
+      resolveValue: (i) => i,
+    });
   },
 
   type: (transactions) => {
-    return groupByDefault('type', transactions);
+    return groupByDefault(transactions, {
+      identifierField: 'type',
+      resolveIdentifier: (t) => t.type,
+      resolveValue: (i) => i,
+    });
+  },
+
+  date: (transactions) => {
+    return groupByDefault(transactions, {
+      identifierField: 'timestamp',
+      resolveIdentifier: (t) => new Date(t.timestamp).getMonth(),
+      resolveValue: (i) => new Date().setMonth(+i),
+    });
   },
 };

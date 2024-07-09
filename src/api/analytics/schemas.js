@@ -11,8 +11,7 @@ export const table = /** @type {const} */ ({
         },
         grouping: {
           type: 'string',
-          // TODO: add date
-          enum: ['portfolio', 'asset', 'type'],
+          enum: ['portfolio', 'asset', 'type', 'date'],
         },
       },
     },
