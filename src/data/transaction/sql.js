@@ -1,4 +1,4 @@
-/** @typedef {import('../../entities/transaction').GeneralTransaction} GeneralTransaction */
+/** @typedef {import('../../entities/transaction').Transaction} Transaction */
 /** @typedef {import('../../types').AssetType} AssetType */
 
 import { resolveTableName } from '../ticker/sql.js';
@@ -42,7 +42,7 @@ export const selectForUser = (userId, schema, portfolioId) => {
 
 /**
  * @param {AssetType} schema
- * @param {Omit<GeneralTransaction, 'id'>} transaction
+ * @param {Omit<Transaction, 'id'>} transaction
  * @returns {{ query: string, params: any[] }}
  */
 export const create = (schema, transaction) => {
@@ -81,7 +81,7 @@ export const create = (schema, transaction) => {
 /**
  * @param {AssetType} schema
  * @param {number} id
- * @param {Partial<GeneralTransaction>} transaction
+ * @param {Partial<Transaction>} transaction
  * @returns {{ query: string, params: any[] }}
  */
 export const update = (schema, id, transaction) => {

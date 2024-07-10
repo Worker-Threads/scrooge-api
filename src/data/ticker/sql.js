@@ -1,7 +1,4 @@
-/**
- * @typedef {import('../../entities/transaction').GeneralTransaction} GeneralTransaction
- * @typedef {import('../../types').AssetType} AssetType
- */
+/** @typedef {import('../../types').AssetType} AssetType */
 
 /**
  * @param {AssetType} schema

@@ -1,8 +1,8 @@
 import type { AssetType } from '../../types.d.ts';
 import type { User } from '../../entities/user.d.ts';
 import type {
-  GeneralTransaction,
-  GeneralTransactionWithType,
+  Transaction,
+  TypedTransaction,
 } from '../../entities/transaction.d.ts';
 import type { PortfolioRepo } from '../../data/portfolio/types.d.ts';
 import type { TransactionRepo } from './../../data/transaction/types.d.ts';
@@ -18,8 +18,8 @@ export interface TransactionService {
   create: (
     type: AssetType,
     user: User,
-    definition: Omit<GeneralTransaction, 'id'>,
-  ) => Promise<GeneralTransactionWithType>;
+    definition: Omit<Transaction, 'id'>,
+  ) => Promise<TypedTransaction>;
   update: (
     type: AssetType,
     user: User,
@@ -29,12 +29,12 @@ export interface TransactionService {
       timestamp?: number;
       price?: number;
     },
-  ) => Promise<GeneralTransactionWithType>;
-  findForUser: (user: User) => Promise<GeneralTransactionWithType[]>;
+  ) => Promise<TypedTransaction>;
+  findForUser: (user: User) => Promise<TypedTransaction[]>;
   findByPortfolio: (
     user: User,
     portfolioId: number,
-  ) => Promise<GeneralTransactionWithType[]>;
+  ) => Promise<TypedTransaction[]>;
   remove: (
     type: AssetType,
     user: User,

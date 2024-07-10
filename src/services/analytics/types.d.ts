@@ -2,8 +2,9 @@ import type { User } from '../../entities/user.d.ts';
 import type { Portfolio } from '../../entities/portfolio.d.ts';
 import type { PortfolioRepo } from '../../data/portfolio/types.d.ts';
 import type {
-  AggTransaction,
   TransactionRepo,
+  GeneralAnalytics,
+  AnalyzedTransaction,
 } from '../../data/transaction/types.d.ts';
 
 interface Deps {
@@ -15,11 +16,14 @@ interface AnalyticsService {
   _getTransactionsList: (
     user: User,
     portfolioId?: number,
-  ) => Promise<{ portfolios: Portfolio[]; transactions: AggTransaction[] }>;
+  ) => Promise<{
+    portfolios: Portfolio[];
+    transactions: AnalyzedTransaction[];
+  }>;
   getHoldingsTable: (
     user: User,
     opts: { portfolioId?: number; grouping?: GroupCriteria },
-  ) => Promise<Partial<AggTransaction>[]>;
+  ) => Promise<Partial<AnalyzedTransaction>[]>;
   getHoldingsDistribution: (
     user: User,
     opts: { portfolioId?: number; grouping: GroupCriteria },
@@ -29,38 +33,25 @@ interface AnalyticsService {
 export function init(deps: Deps): AnalyticsService;
 
 export type GroupCriteria = '*' | 'portfolio' | 'asset' | 'type' | 'date';
-export type GroupFields = 'portfolioId' | 'type' | 'ticker' | 'timestamp';
+export type GroupFields =
+  | 'portfolioId'
+  | 'type'
+  | 'ticker'
+  | 'currency'
+  | 'timestamp';
 
-export type HoldingsAnalytics = {
-  entryVolume: number;
-  currentVolume: number;
-  profit: number;
-  growth: number;
-};
-
-export type TransactionWithAnalytics = Partial<AggTransaction> &
-  HoldingsAnalytics;
-
-export type GroupedAndAggregatedTransactions = Record<
-  string,
-  TransactionWithAnalytics
->;
-
-export function aggregate(transactions: AggTransaction[]): {
-  entryVolume: number;
-  currentVolume: number;
-  profit: number;
-  growth: number;
-};
+export function aggregate(
+  transactions: AnalyzedTransaction[],
+): GeneralAnalytics;
 
 export function group(
-  transactions: AggTransaction[],
+  transactions: AnalyzedTransaction[],
   identifierField: GroupFields,
-): Record<string, AggTransaction[]>;
+): Record<string, AnalyzedTransaction[]>;
 
 export type GroupByCriteriaFn = (
-  transactions: AggTransaction[],
+  transactions: AnalyzedTransaction[],
   opts: { portfolios: Portfolio[] },
-) => GroupedAndAggregatedTransactions;
+) => Record<string, GeneralAnalytics>;
 
 export type GroupBy = (criteria: GroupCriteria) => GroupByCriteriaFn;

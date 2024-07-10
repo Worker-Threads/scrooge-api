@@ -2,20 +2,21 @@
  * @typedef {import('../../types').AssetType} AssetType
  * @typedef {import('./types').GroupCriteria} GroupCriteria
  * @typedef {import('./types').GroupByCriteriaFn} GroupByCriteriaFn
- * @typedef {import('./types').TransactionWithAnalytics} TransactionWithAnalytics
- * @typedef {import('../../data/transaction/types').AggTransaction} AggTransaction
+ * @typedef {import('../../data/transaction/types').GeneralAnalytics} GeneralAnalytics
+ * @typedef {import('../../data/transaction/types').AnalyzedTransaction} AnalyzedTransaction
  */
 
 /** @type {import('./types').group} */
 const group = (transactions, identifierField) => {
   return transactions.reduce((map, transaction) => {
     const identifier = transaction[identifierField];
+    if (!identifier) return map;
 
     if (!map[identifier]) map[identifier] = [];
     map[identifier].push(transaction);
 
     return map;
-  }, /** @type {Record<string | number, AggTransaction[]>} */ ({}));
+  }, /** @type {Record<string | number, AnalyzedTransaction[]>} */ ({}));
 };
 
 /** @type {import('./types').aggregate} */
@@ -42,7 +43,7 @@ const groupByCriteriaMap = {
 
   portfolio: (transactions, { portfolios }) => {
     const grouped = group(transactions, 'portfolioId');
-    /** @type {Record<string, TransactionWithAnalytics>} */
+    /** @type {Record<string, GeneralAnalytics & { portfolioId: number, portfolioTitle: string }>} */
     const result = {};
 
     /** @type {Record<number, string>} */
@@ -68,7 +69,7 @@ const groupByCriteriaMap = {
 
   asset: (transactions) => {
     const grouped = group(transactions, 'ticker');
-    /** @type {Record<string, TransactionWithAnalytics>} */
+    /** @type {Record<string, GeneralAnalytics & { ticker: string }>} */
     const result = {};
 
     for (const key in grouped) {
@@ -86,7 +87,7 @@ const groupByCriteriaMap = {
 
   type: (transactions) => {
     const grouped = group(transactions, 'type');
-    /** @type {Record<string, TransactionWithAnalytics>} */
+    /** @type {Record<string, GeneralAnalytics & { type: string }>} */
     const result = {};
 
     for (const key in grouped) {
@@ -114,7 +115,7 @@ const groupByCriteriaMap = {
     });
 
     const grouped = group(trsWithMonth, 'timestamp');
-    /** @type {Record<string, TransactionWithAnalytics>} */
+    /** @type {Record<string, GeneralAnalytics & { timestamp: number }>} */
     const result = {};
 
     for (const key in grouped) {

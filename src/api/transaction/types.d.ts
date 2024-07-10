@@ -1,6 +1,6 @@
 import * as SchemaType from 'json-schema-to-ts';
 import type { API, ProtectedEndpoint } from '../types.d.ts';
-import type { GeneralTransactionWithType } from '../../entities/transaction.d.ts';
+import type { TypedTransaction } from '../../entities/transaction.d.ts';
 import type { TransactionService } from '../../services/transaction/types.d.ts';
 import * as schemas from './schemas.js';
 
@@ -11,15 +11,12 @@ type GetByPortfolioParam = SchemaType.FromSchema<typeof schemas.getByPortfolio>;
 type DeleteParam = SchemaType.FromSchema<typeof schemas.remove>;
 
 export interface TransactionApi extends API {
-  create: ProtectedEndpoint<CreateParam, Promise<GeneralTransactionWithType>>;
-  update: ProtectedEndpoint<UpdateParam, Promise<GeneralTransactionWithType>>;
-  transactions: ProtectedEndpoint<
-    GetForUserParam,
-    Promise<GeneralTransactionWithType[]>
-  >;
+  create: ProtectedEndpoint<CreateParam, Promise<TypedTransaction>>;
+  update: ProtectedEndpoint<UpdateParam, Promise<TypedTransaction>>;
+  transactions: ProtectedEndpoint<GetForUserParam, Promise<TypedTransaction[]>>;
   portfolio: ProtectedEndpoint<
     GetByPortfolioParam,
-    Promise<GeneralTransactionWithType[]>
+    Promise<TypedTransaction[]>
   >;
   remove: ProtectedEndpoint<DeleteParam, Promise<{ removed: boolean }>>;
 }

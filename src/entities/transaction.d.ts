@@ -7,33 +7,12 @@ export interface AbstractTransaction {
   timestamp: number;
 }
 
-export interface CryptoTransaction extends AbstractTransaction {
-  ticker: string;
-  price: number;
+export interface Transaction extends AbstractTransaction {
+  ticker?: string;
+  currency?: string;
+  price?: number;
 }
 
-export interface EtfTransaction extends AbstractTransaction {
-  ticker: string;
-  price: number;
-}
-
-export interface StockTransaction extends AbstractTransaction {
-  ticker: string;
-  price: number;
-}
-
-export interface FiatTransaction extends AbstractTransaction {
-  currency: string;
-  price: number;
-}
-
-export type GeneralTransaction = (
-  | CryptoTransaction
-  | EtfTransaction
-  | StockTransaction
-  | FiatTransaction
-) & { ticker?: string; currency?: string };
-
-export type GeneralTransactionWithType = {
+export interface TypedTransaction extends Transaction {
   type: AssetType;
-} & GeneralTransaction;
+}

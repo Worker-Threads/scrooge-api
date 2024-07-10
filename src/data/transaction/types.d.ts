@@ -1,26 +1,29 @@
 import type { Pool } from 'pg';
-import type { GeneralTransaction } from '../../entities/transaction.d.ts';
+import type {
+  Transaction,
+  TypedTransaction,
+} from '../../entities/transaction.d.ts';
 import type { AssetType } from '../../types.d.ts';
 
-export interface AggTransaction {
-  type: AssetType;
-  portfolioId: number;
-  portfolioTitle: string;
-  ticker: string;
+export interface GeneralAnalytics {
   entryVolume: number;
   currentVolume: number;
-  entryPrice: number;
-  currentPrice: number;
   growth: number;
   profit: number;
-  timestamp: number;
+}
+
+export interface AnalyzedTransaction
+  extends TypedTransaction,
+    GeneralAnalytics {
+  entryPrice: number;
+  currentPrice: number;
 }
 
 export class TransactionRepo {
   create: (
     schema: AssetType,
-    transaction: Omit<GeneralTransaction, 'id'>,
-  ) => Promise<GeneralTransaction>;
+    transaction: Omit<Transaction, 'id'>,
+  ) => Promise<Transaction>;
   update: (
     schema: AssetType,
     id: number,
@@ -29,18 +32,15 @@ export class TransactionRepo {
       timestamp?: number;
       price?: number;
     },
-  ) => Promise<GeneralTransaction>;
+  ) => Promise<Transaction>;
   findForUser: (
     schema: AssetType,
     userId: number,
     portfolioId?: number,
-  ) => Promise<GeneralTransaction[]>;
-  findById: (
-    schema: AssetType,
-    id: number,
-  ) => Promise<GeneralTransaction | null>;
+  ) => Promise<Transaction[]>;
+  findById: (schema: AssetType, id: number) => Promise<Transaction | null>;
   remove: (schema: AssetType, id: number) => Promise<{ removed: boolean }>;
-  getWithProfit: (portfolioIds: number[]) => Promise<AggTransaction[]>;
+  getWithProfit: (portfolioIds: number[]) => Promise<AnalyzedTransaction[]>;
 }
 
 export function init(pg: Pool): TransactionRepo;
