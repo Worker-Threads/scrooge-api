@@ -14,7 +14,7 @@ export const init = ({ analyticsService }) => ({
         '*',
       );
 
-      return aggregated.length === 1 ? aggregated[0] : null;
+      return aggregated.length ? aggregated[0] : null;
     },
   },
 
