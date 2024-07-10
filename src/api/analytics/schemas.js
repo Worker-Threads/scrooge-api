@@ -1,5 +1,13 @@
 import { authHeaders } from '../schemaParts.js';
 
+export const general = /** @type {const} */ ({
+  type: 'object',
+  properties: {
+    headers: authHeaders,
+  },
+  required: ['headers'],
+});
+
 export const table = /** @type {const} */ ({
   type: 'object',
   properties: {

@@ -1,7 +1,7 @@
 import type { AggTransaction } from '../../../data/transaction/types.d.ts';
 import type { Portfolio } from '../../../entities/portfolio.d.ts';
 
-export type GroupCriteria = 'portfolio' | 'asset' | 'type' | 'date';
+export type GroupCriteria = '*' | 'portfolio' | 'asset' | 'type' | 'date';
 export type GroupFields = 'portfolioId' | 'type' | 'ticker' | 'timestamp';
 
 interface Opts {
@@ -9,6 +9,10 @@ interface Opts {
   resolveIdentifier: (t: AggTransaction) => string | number;
   resolveValue: (identifier: string | number) => string | number;
 }
+
+export function aggregate(
+  transactions: AggTransaction[],
+): Partial<AggTransaction>;
 
 export function groupByDefault(
   transactions: AggTransaction[],

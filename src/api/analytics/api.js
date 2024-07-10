@@ -2,6 +2,22 @@ import * as schemas from './schemas.js';
 
 /** @type {import('./types').init} */
 export const init = ({ analyticsService }) => ({
+  general: {
+    method: 'get',
+    access: 'common',
+    schema: schemas.general,
+    handler: async (session, request) => {
+      const { user } = session;
+      const aggregated = await analyticsService.getTransactionsTable(
+        user,
+        undefined,
+        '*',
+      );
+
+      return aggregated.length === 1 ? aggregated[0] : null;
+    },
+  },
+
   table: {
     method: 'get',
     access: 'common',
