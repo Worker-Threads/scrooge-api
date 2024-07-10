@@ -38,6 +38,6 @@ export function group(
 export type GroupByCriteriaFn = (
   transactions: AggTransaction[],
   opts: { portfolios: Portfolio[] },
-) => Partial<AggTransaction>[];
+) => Record<string, Partial<AggTransaction>>;
 
 export type GroupBy = (criteria: GroupCriteria) => GroupByCriteriaFn;

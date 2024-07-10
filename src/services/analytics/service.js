@@ -20,8 +20,10 @@ export const init = ({ portfolioRepo, transactionRepo }) => ({
       portfolios.map(({ id }) => id),
     );
 
-    return grouping
+    const grouped = grouping
       ? groupBy(grouping)(transactions, { portfolios })
       : transactions;
+
+    return Object.values(grouped);
   },
 });

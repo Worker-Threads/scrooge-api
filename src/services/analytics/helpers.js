@@ -36,11 +36,13 @@ const aggregate = (transactions) => {
 /** @type {Record<GroupCriteria, GroupByCriteriaFn>} */
 const groupByCriteriaMap = {
   '*': (transactions) => {
-    return [aggregate(transactions)];
+    return { '*': aggregate(transactions) };
   },
 
   portfolio: (transactions, { portfolios }) => {
     const grouped = group(transactions, 'portfolioId');
+    /** @type {Record<string, Partial<AggTransaction>>} */
+    const result = {};
 
     /** @type {Record<number, string>} */
     const portfolioTitles = portfolios.reduce(
@@ -48,43 +50,56 @@ const groupByCriteriaMap = {
       {},
     );
 
-    return Object.entries(grouped).map(([key, trs]) => {
+    for (const key in grouped) {
+      const trs = grouped[key];
       const agg = aggregate(trs);
       const portfolioId = +key;
 
-      return {
+      result[key] = {
+        ...agg,
         portfolioId,
         portfolioTitle: portfolioTitles[portfolioId],
-        ...agg,
       };
-    });
+    }
+
+    return result;
   },
 
   asset: (transactions) => {
     const grouped = group(transactions, 'ticker');
+    /** @type {Record<string, Partial<AggTransaction>>} */
+    const result = {};
 
-    return Object.entries(grouped).map(([key, trs]) => {
+    for (const key in grouped) {
+      const trs = grouped[key];
       const agg = aggregate(trs);
 
-      return {
-        ticker: key,
+      result[key] = {
         ...agg,
+        ticker: key,
       };
-    });
+    }
+
+    return result;
   },
 
   type: (transactions) => {
     const grouped = group(transactions, 'type');
+    /** @type {Record<string, Partial<AggTransaction>>} */
+    const result = {};
 
-    return Object.entries(grouped).map(([key, trs]) => {
+    for (const key in grouped) {
+      const trs = grouped[key];
       const agg = aggregate(trs);
       const typedKey = /** @type {AssetType} */ (key);
 
-      return {
-        type: typedKey,
+      result[key] = {
         ...agg,
+        type: typedKey,
       };
-    });
+    }
+
+    return result;
   },
 
   date: (transactions) => {
@@ -94,24 +109,21 @@ const groupByCriteriaMap = {
       const year = date.getUTCFullYear();
       const day = 15; // WARN! Possible Timezone issues
 
-      const timestamp = new Date(`${year}-${month}-${day}`).getTime();
-
-      return {
-        ...t,
-        timestamp,
-      };
+      return { ...t, timestamp: new Date(`${year}-${month}-${day}`).getTime() };
     });
 
     const grouped = group(trsWithMonth, 'timestamp');
+    /** @type {Record<string, Partial<AggTransaction>>} */
+    const result = {};
 
-    return Object.entries(grouped).map(([key, trs]) => {
+    for (const key in grouped) {
+      const trs = grouped[key];
       const agg = aggregate(trs);
 
-      return {
-        ...agg,
-        timestamp: +key,
-      };
-    });
+      result[key] = { ...agg, timestamp: +key };
+    }
+
+    return result;
   },
 };
 
