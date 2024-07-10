@@ -56,7 +56,7 @@ export const init = (pool) => ({
     return { removed };
   },
 
-  getWithProfit: async (portfolioIds) => {
+  getAnalyzedTransactions: async (portfolioIds) => {
     /** @type {AssetType[]} */
     const assetTypes = ['crypto', 'etf', 'stock', 'fiat'];
 

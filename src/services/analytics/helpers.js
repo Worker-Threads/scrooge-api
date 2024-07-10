@@ -1,16 +1,19 @@
 /**
  * @typedef {import('../../types').AssetType} AssetType
+ * @typedef {import('./types').GroupFields} GroupFields
  * @typedef {import('./types').GroupCriteria} GroupCriteria
- * @typedef {import('./types').GroupByCriteriaFn} GroupByCriteriaFn
+ * @typedef {import('./types').groupByCriteria} groupByCriteria
  * @typedef {import('../../data/transaction/types').GeneralAnalytics} GeneralAnalytics
  * @typedef {import('../../data/transaction/types').AnalyzedTransaction} AnalyzedTransaction
  */
 
-/** @type {import('./types').group} */
+/**
+ * @param {GroupFields} identifierField
+ * @param {AnalyzedTransaction[]} transactions
+ */
 const group = (transactions, identifierField) => {
   return transactions.reduce((map, transaction) => {
     const identifier = transaction[identifierField];
-    if (!identifier) return map;
 
     if (!map[identifier]) map[identifier] = [];
     map[identifier].push(transaction);
@@ -19,7 +22,10 @@ const group = (transactions, identifierField) => {
   }, /** @type {Record<string | number, AnalyzedTransaction[]>} */ ({}));
 };
 
-/** @type {import('./types').aggregate} */
+/**
+ * @param {GeneralAnalytics[]} transactions
+ * @returns {GeneralAnalytics}
+ */
 const aggregate = (transactions) => {
   const aggregated = { entryVolume: 0, currentVolume: 0, profit: 0, growth: 0 };
 
@@ -35,99 +41,103 @@ const aggregate = (transactions) => {
   };
 };
 
-/** @type {Record<GroupCriteria, GroupByCriteriaFn>} */
-const groupByCriteriaMap = {
-  '*': (transactions) => {
-    return { '*': aggregate(transactions) };
-  },
+/** @param {GroupCriteria} criteria */
+export const groupBy = (criteria) =>
+  /** @type {Record<GroupCriteria, groupByCriteria>} */
+  ({
+    all: (transactions) => {
+      const aggregated = aggregate(transactions);
 
-  portfolio: (transactions, { portfolios }) => {
-    const grouped = group(transactions, 'portfolioId');
-    /** @type {Record<string, GeneralAnalytics & { portfolioId: number, portfolioTitle: string }>} */
-    const result = {};
+      return { all: aggregated };
+    },
 
-    /** @type {Record<number, string>} */
-    const portfolioTitles = portfolios.reduce(
-      (map, { id, title }) => ({ ...map, [id]: title }),
-      {},
-    );
+    portfolio: (transactions, { portfolios }) => {
+      const grouped = group(transactions, 'portfolioId');
+      /** @type {Record<string, GeneralAnalytics & { portfolioId: number, portfolioTitle: string }>} */
+      const result = {};
 
-    for (const key in grouped) {
-      const trs = grouped[key];
-      const agg = aggregate(trs);
-      const portfolioId = +key;
+      /** @type {Record<number, string>} */
+      const portfolioTitles = portfolios.reduce(
+        (map, { id, title }) => ({ ...map, [id]: title }),
+        {},
+      );
 
-      result[key] = {
-        ...agg,
-        portfolioId,
-        portfolioTitle: portfolioTitles[portfolioId],
-      };
-    }
+      for (const key in grouped) {
+        const trs = grouped[key];
+        const agg = aggregate(trs);
+        const portfolioId = +key;
 
-    return result;
-  },
+        result[key] = {
+          ...agg,
+          portfolioId,
+          portfolioTitle: portfolioTitles[portfolioId],
+        };
+      }
 
-  asset: (transactions) => {
-    const grouped = group(transactions, 'ticker');
-    /** @type {Record<string, GeneralAnalytics & { ticker: string }>} */
-    const result = {};
+      return result;
+    },
 
-    for (const key in grouped) {
-      const trs = grouped[key];
-      const agg = aggregate(trs);
+    asset: (transactions) => {
+      const grouped = group(transactions, 'ticker');
+      /** @type {Record<string, GeneralAnalytics & { ticker: string }>} */
+      const result = {};
 
-      result[key] = {
-        ...agg,
-        ticker: key,
-      };
-    }
+      for (const key in grouped) {
+        const trs = grouped[key];
+        const agg = aggregate(trs);
 
-    return result;
-  },
+        result[key] = {
+          ...agg,
+          ticker: key,
+        };
+      }
 
-  type: (transactions) => {
-    const grouped = group(transactions, 'type');
-    /** @type {Record<string, GeneralAnalytics & { type: string }>} */
-    const result = {};
+      return result;
+    },
 
-    for (const key in grouped) {
-      const trs = grouped[key];
-      const agg = aggregate(trs);
-      const typedKey = /** @type {AssetType} */ (key);
+    type: (transactions) => {
+      const grouped = group(transactions, 'type');
+      /** @type {Record<string, GeneralAnalytics & { type: string }>} */
+      const result = {};
 
-      result[key] = {
-        ...agg,
-        type: typedKey,
-      };
-    }
+      for (const key in grouped) {
+        const trs = grouped[key];
+        const agg = aggregate(trs);
+        const typedKey = /** @type {AssetType} */ (key);
 
-    return result;
-  },
+        result[key] = {
+          ...agg,
+          type: typedKey,
+        };
+      }
 
-  date: (transactions) => {
-    const trsWithMonth = transactions.map((t) => {
-      const date = new Date(t.timestamp);
-      const month = date.getUTCMonth() + 1; // js month starts with 0
-      const year = date.getUTCFullYear();
-      const day = 15; // WARN! Possible Timezone issues
+      return result;
+    },
 
-      return { ...t, timestamp: new Date(`${year}-${month}-${day}`).getTime() };
-    });
+    date: (transactions) => {
+      const trsWithMonth = transactions.map((t) => {
+        const date = new Date(t.timestamp);
+        const month = date.getUTCMonth() + 1; // js month starts with 0
+        const year = date.getUTCFullYear();
+        const day = 15; // WARN! Possible Timezone issues
 
-    const grouped = group(trsWithMonth, 'timestamp');
-    /** @type {Record<string, GeneralAnalytics & { timestamp: number }>} */
-    const result = {};
+        return {
+          ...t,
+          timestamp: new Date(`${year}-${month}-${day}`).getTime(),
+        };
+      });
 
-    for (const key in grouped) {
-      const trs = grouped[key];
-      const agg = aggregate(trs);
+      const grouped = group(trsWithMonth, 'timestamp');
+      /** @type {Record<string, GeneralAnalytics & { timestamp: number }>} */
+      const result = {};
 
-      result[key] = { ...agg, timestamp: +key };
-    }
+      for (const key in grouped) {
+        const trs = grouped[key];
+        const agg = aggregate(trs);
 
-    return result;
-  },
-};
+        result[key] = { ...agg, timestamp: +key };
+      }
 
-/** @type {import('./types').GroupBy} */
-export const groupBy = (criteria) => groupByCriteriaMap[criteria];
+      return result;
+    },
+  })[criteria];

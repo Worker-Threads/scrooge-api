@@ -12,6 +12,9 @@ interface Deps {
   transactionRepo: TransactionRepo;
 }
 
+export type GroupCriteria = 'all' | 'portfolio' | 'asset' | 'type' | 'date';
+export type GroupFields = 'portfolioId' | 'type' | 'ticker' | 'timestamp';
+
 interface AnalyticsService {
   _getTransactionsList: (
     user: User,
@@ -32,26 +35,7 @@ interface AnalyticsService {
 
 export function init(deps: Deps): AnalyticsService;
 
-export type GroupCriteria = '*' | 'portfolio' | 'asset' | 'type' | 'date';
-export type GroupFields =
-  | 'portfolioId'
-  | 'type'
-  | 'ticker'
-  | 'currency'
-  | 'timestamp';
-
-export function aggregate(
-  transactions: AnalyzedTransaction[],
-): GeneralAnalytics;
-
-export function group(
-  transactions: AnalyzedTransaction[],
-  identifierField: GroupFields,
-): Record<string, AnalyzedTransaction[]>;
-
-export type GroupByCriteriaFn = (
+export function groupByCriteria(
   transactions: AnalyzedTransaction[],
   opts: { portfolios: Portfolio[] },
-) => Record<string, GeneralAnalytics>;
-
-export type GroupBy = (criteria: GroupCriteria) => GroupByCriteriaFn;
+): Record<string, GeneralAnalytics>;

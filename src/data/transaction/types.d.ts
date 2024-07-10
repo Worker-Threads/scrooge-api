@@ -15,6 +15,7 @@ export interface GeneralAnalytics {
 export interface AnalyzedTransaction
   extends TypedTransaction,
     GeneralAnalytics {
+  ticker: string;
   entryPrice: number;
   currentPrice: number;
 }
@@ -40,7 +41,9 @@ export class TransactionRepo {
   ) => Promise<Transaction[]>;
   findById: (schema: AssetType, id: number) => Promise<Transaction | null>;
   remove: (schema: AssetType, id: number) => Promise<{ removed: boolean }>;
-  getWithProfit: (portfolioIds: number[]) => Promise<AnalyzedTransaction[]>;
+  getAnalyzedTransactions: (
+    portfolioIds: number[],
+  ) => Promise<AnalyzedTransaction[]>;
 }
 
 export function init(pg: Pool): TransactionRepo;

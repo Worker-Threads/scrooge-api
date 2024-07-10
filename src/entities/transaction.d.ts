@@ -1,13 +1,10 @@
 import type { AssetType } from '../types.d.ts';
 
-export interface AbstractTransaction {
+export interface Transaction {
   id: number;
   portfolioId: number;
   volume: number;
   timestamp: number;
-}
-
-export interface Transaction extends AbstractTransaction {
   ticker?: string;
   currency?: string;
   price?: number;

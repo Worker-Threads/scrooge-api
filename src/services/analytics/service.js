@@ -16,7 +16,7 @@ export const init = ({ portfolioRepo, transactionRepo }) => ({
       portfolios.push(...userPortfolios);
     }
 
-    const transactions = await transactionRepo.getWithProfit(
+    const transactions = await transactionRepo.getAnalyzedTransactions(
       portfolios.map(({ id }) => id),
     );
 

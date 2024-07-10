@@ -9,7 +9,7 @@ export const init = ({ analyticsService }) => ({
     handler: async (session, request) => {
       const { user } = session;
       const aggregated = await analyticsService.getHoldingsTable(user, {
-        grouping: '*',
+        grouping: 'all',
       });
 
       return aggregated.length ? aggregated[0] : null;
