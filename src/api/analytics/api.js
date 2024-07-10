@@ -8,11 +8,9 @@ export const init = ({ analyticsService }) => ({
     schema: schemas.general,
     handler: async (session, request) => {
       const { user } = session;
-      const aggregated = await analyticsService.getTransactionsTable(
-        user,
-        undefined,
-        '*',
-      );
+      const aggregated = await analyticsService.getHoldingsTable(user, {
+        grouping: '*',
+      });
 
       return aggregated.length ? aggregated[0] : null;
     },
@@ -26,7 +24,7 @@ export const init = ({ analyticsService }) => ({
       const { user } = session;
       const { portfolioId, grouping } = request.query;
 
-      return analyticsService.getTransactionsTable(user, portfolioId, grouping);
+      return analyticsService.getHoldingsTable(user, { portfolioId, grouping });
     },
   },
 });

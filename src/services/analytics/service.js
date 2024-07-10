@@ -1,9 +1,9 @@
 import { exception } from '../../utils/exception/util.js';
-import { groupFunctionMap } from './helpers/group.js';
+import { groupBy } from './helpers.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = ({ portfolioRepo, transactionRepo }) => ({
-  getTransactionsTable: async (user, portfolioId, grouping) => {
+  getHoldingsTable: async (user, { portfolioId, grouping }) => {
     const { id: userId } = user;
     const portfolios = [];
 
@@ -25,7 +25,7 @@ export const init = ({ portfolioRepo, transactionRepo }) => ({
     );
 
     return grouping
-      ? groupFunctionMap[grouping](transactions, { portfolios })
+      ? groupBy(grouping)(transactions, { portfolios })
       : transactions;
   },
 });
