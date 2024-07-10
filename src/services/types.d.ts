@@ -1,4 +1,7 @@
 import type { Repos } from '../data/types.js';
+import type { AssetType } from '../types.d.ts';
+import type { User } from '../entities/user.d.ts';
+import type { Portfolio } from '../entities/portfolio.d.ts';
 import type { AuthService } from './auth/types.d.ts';
 import type { UserService } from './user/types.d.ts';
 import type { PortfolioService } from './portfolio/types.d.ts';
@@ -18,3 +21,9 @@ export interface Services {
 }
 
 export function init(repos: Repos): Services;
+
+export function verifyPortfolio(
+  user: User,
+  portfolio: Portfolio | null,
+  type?: AssetType,
+): Portfolio;

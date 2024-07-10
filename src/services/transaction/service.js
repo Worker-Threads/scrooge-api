@@ -1,20 +1,8 @@
 import { exception } from '../../utils/exception/util.js';
+import { verifyPortfolio } from '../helpers.js';
 
 /** @type {import('../../types.d.ts').AssetType[]} */
 const allAssetTypes = ['crypto', 'etf', 'fiat', 'stock'];
-
-/** @type {import('./types.d.ts').checkPortfolioAccess}*/
-const checkPortfolioAccess = (user, portfolio, type) => {
-  if (!portfolio) throw exception.notFound('Portfolio not found');
-
-  if (portfolio.userId !== user.id)
-    throw exception.forbidden('User has no access to this portfolio');
-
-  if (type && portfolio.type !== 'mixed' && portfolio.type !== type)
-    throw exception.badRequest(
-      `Type "${type}" is not assignable to portfolio with type "${portfolio.type}"`,
-    );
-};
 
 /** @type {import('./types.d.ts').init} */
 export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
@@ -25,7 +13,7 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
       id: portfolioId,
     });
 
-    checkPortfolioAccess(user, portfolio, type);
+    verifyPortfolio(user, portfolio, type);
 
     const identifier = definition.currency ?? definition.ticker;
     if (!identifier)
@@ -49,7 +37,7 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
       id: transaction.portfolioId,
     });
 
-    checkPortfolioAccess(user, portfolio, type);
+    verifyPortfolio(user, portfolio, type);
 
     const updated = await transactionRepo.update(type, id, rest);
 
@@ -78,10 +66,12 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
       id: portfolioId,
     });
 
-    checkPortfolioAccess(user, portfolio);
+    const verifiedPortfolio = verifyPortfolio(user, portfolio);
 
-    // @ts-ignore for "portfolio is possibly null" error. It can't be null. See checkPortfolioAccess
-    const types = portfolio.type === 'mixed' ? allAssetTypes : [portfolio.type];
+    const types =
+      verifiedPortfolio.type === 'mixed'
+        ? allAssetTypes
+        : [verifiedPortfolio.type];
 
     const promises = types.map(async (type) => {
       const trs = await transactionRepo.findForUser(type, userId, portfolioId);
@@ -103,7 +93,7 @@ export const init = ({ transactionRepo, portfolioRepo, tickerRepo }) => ({
       id: transaction.portfolioId,
     });
 
-    checkPortfolioAccess(user, portfolio);
+    verifyPortfolio(user, portfolio);
 
     return transactionRepo.remove(type, id);
   },

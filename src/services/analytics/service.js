@@ -1,4 +1,4 @@
-import { exception } from '../../utils/exception/util.js';
+import { verifyPortfolio } from '../helpers.js';
 import { groupBy } from './helpers.js';
 
 /** @type {import('./types.d.ts').init} */
@@ -9,14 +9,10 @@ export const init = ({ portfolioRepo, transactionRepo }) => ({
 
     if (portfolioId) {
       const portfolio = await portfolioRepo.findOne({ id: portfolioId });
-      if (!portfolio) throw exception.notFound('Portfolio not found');
-      if (portfolio.userId !== userId)
-        throw exception.forbidden('User has no access to this portfolio');
-
-      portfolios.push(portfolio);
+      const verifiedPortfolio = verifyPortfolio(user, portfolio);
+      portfolios.push(verifiedPortfolio);
     } else {
       const userPortfolios = await portfolioRepo.find({ userId });
-
       portfolios.push(...userPortfolios);
     }
 

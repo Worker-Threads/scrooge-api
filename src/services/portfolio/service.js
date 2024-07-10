@@ -1,4 +1,4 @@
-import { exception } from '../../utils/exception/util.js';
+import { verifyPortfolio } from '../helpers.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = ({ portfolioRepo }) => ({
@@ -9,35 +9,23 @@ export const init = ({ portfolioRepo }) => ({
   },
 
   update: async (user, definition) => {
-    const { id: userId } = user;
     const { id, ...rest } = definition;
 
     const portfolio = await portfolioRepo.findOne({ id });
-    if (!portfolio) throw exception.notFound('Portfolio not found');
-    if (portfolio.userId !== userId)
-      throw exception.forbidden('User has no access to this portfolio');
+    verifyPortfolio(user, portfolio);
 
     return portfolioRepo.update(id, rest);
   },
 
   findOne: async (user, definition) => {
-    const { id: userId } = user;
-
     const portfolio = await portfolioRepo.findOne(definition);
-    if (!portfolio) throw exception.notFound('Portfolio not found');
-    if (portfolio.userId !== userId)
-      throw exception.forbidden('User has no access to this portfolio');
 
-    return portfolio;
+    return verifyPortfolio(user, portfolio);
   },
 
   remove: async (user, id) => {
-    const { id: userId } = user;
-
     const portfolio = await portfolioRepo.findOne({ id });
-    if (!portfolio) throw exception.notFound('Portfolio not found');
-    if (portfolio.userId !== userId)
-      throw exception.forbidden('User has no access to this portfolio');
+    verifyPortfolio(user, portfolio);
 
     return portfolioRepo.remove(id);
   },
