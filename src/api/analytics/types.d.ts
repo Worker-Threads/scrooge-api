@@ -7,7 +7,7 @@ import * as schemas from './schemas.js';
 
 type GeneralParam = SchemaType.FromSchema<typeof schemas.general>;
 type TableParam = SchemaType.FromSchema<typeof schemas.table>;
-// type AllocationParam = SchemaType.FromSchema<typeof schemas.allocation>;
+type AllocationParam = SchemaType.FromSchema<typeof schemas.allocation>;
 // type ChartParam = SchemaType.FromSchema<typeof schemas.chart>;
 
 export interface AnalyticsApi extends API {
@@ -16,7 +16,10 @@ export interface AnalyticsApi extends API {
     Promise<Partial<AggTransaction | null>>
   >;
   table: ProtectedEndpoint<TableParam, Promise<Partial<AggTransaction>[]>>;
-  // allocation: ProtectedEndpoint<AllocationParam, any>;
+  allocation: ProtectedEndpoint<
+    AllocationParam,
+    Promise<Record<string, number>>
+  >;
   // chart: ProtectedEndpoint<ChartParam, any>;
 }
 

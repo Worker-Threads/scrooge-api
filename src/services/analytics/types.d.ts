@@ -6,29 +6,52 @@ import type {
   TransactionRepo,
 } from '../../data/transaction/types.d.ts';
 
-export type GroupCriteria = '*' | 'portfolio' | 'asset' | 'type' | 'date';
-export type GroupFields = 'portfolioId' | 'type' | 'ticker' | 'timestamp';
-
 interface Deps {
   portfolioRepo: PortfolioRepo;
   transactionRepo: TransactionRepo;
 }
 
 interface AnalyticsService {
+  _getTransactionsList: (
+    user: User,
+    portfolioId?: number,
+  ) => Promise<{ portfolios: Portfolio[]; transactions: AggTransaction[] }>;
   getHoldingsTable: (
     user: User,
     opts: { portfolioId?: number; grouping?: GroupCriteria },
   ) => Promise<Partial<AggTransaction>[]>;
+  getHoldingsDistribution: (
+    user: User,
+    opts: { portfolioId?: number; grouping: GroupCriteria },
+  ) => Promise<Record<string, number>>;
 }
 
 export function init(deps: Deps): AnalyticsService;
 
-export function aggregate(transactions: AggTransaction[]): Partial<{
+export type GroupCriteria = '*' | 'portfolio' | 'asset' | 'type' | 'date';
+export type GroupFields = 'portfolioId' | 'type' | 'ticker' | 'timestamp';
+
+export type HoldingsAnalytics = {
   entryVolume: number;
   currentVolume: number;
   profit: number;
   growth: number;
-}>;
+};
+
+export type TransactionWithAnalytics = Partial<AggTransaction> &
+  HoldingsAnalytics;
+
+export type GroupedAndAggregatedTransactions = Record<
+  string,
+  TransactionWithAnalytics
+>;
+
+export function aggregate(transactions: AggTransaction[]): {
+  entryVolume: number;
+  currentVolume: number;
+  profit: number;
+  growth: number;
+};
 
 export function group(
   transactions: AggTransaction[],
@@ -38,6 +61,6 @@ export function group(
 export type GroupByCriteriaFn = (
   transactions: AggTransaction[],
   opts: { portfolios: Portfolio[] },
-) => Record<string, Partial<AggTransaction>>;
+) => GroupedAndAggregatedTransactions;
 
 export type GroupBy = (criteria: GroupCriteria) => GroupByCriteriaFn;

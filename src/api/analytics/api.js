@@ -27,4 +27,19 @@ export const init = ({ analyticsService }) => ({
       return analyticsService.getHoldingsTable(user, { portfolioId, grouping });
     },
   },
+
+  allocation: {
+    method: 'get',
+    access: 'common',
+    schema: schemas.table,
+    handler: (session, request) => {
+      const { user } = session;
+      const { portfolioId, grouping } = request.query;
+
+      return analyticsService.getHoldingsDistribution(user, {
+        portfolioId,
+        grouping: grouping ?? 'portfolio',
+      });
+    },
+  },
 });

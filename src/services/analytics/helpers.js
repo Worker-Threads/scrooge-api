@@ -2,6 +2,7 @@
  * @typedef {import('../../types').AssetType} AssetType
  * @typedef {import('./types').GroupCriteria} GroupCriteria
  * @typedef {import('./types').GroupByCriteriaFn} GroupByCriteriaFn
+ * @typedef {import('./types').TransactionWithAnalytics} TransactionWithAnalytics
  * @typedef {import('../../data/transaction/types').AggTransaction} AggTransaction
  */
 
@@ -41,7 +42,7 @@ const groupByCriteriaMap = {
 
   portfolio: (transactions, { portfolios }) => {
     const grouped = group(transactions, 'portfolioId');
-    /** @type {Record<string, Partial<AggTransaction>>} */
+    /** @type {Record<string, TransactionWithAnalytics>} */
     const result = {};
 
     /** @type {Record<number, string>} */
@@ -67,7 +68,7 @@ const groupByCriteriaMap = {
 
   asset: (transactions) => {
     const grouped = group(transactions, 'ticker');
-    /** @type {Record<string, Partial<AggTransaction>>} */
+    /** @type {Record<string, TransactionWithAnalytics>} */
     const result = {};
 
     for (const key in grouped) {
@@ -85,7 +86,7 @@ const groupByCriteriaMap = {
 
   type: (transactions) => {
     const grouped = group(transactions, 'type');
-    /** @type {Record<string, Partial<AggTransaction>>} */
+    /** @type {Record<string, TransactionWithAnalytics>} */
     const result = {};
 
     for (const key in grouped) {
@@ -113,7 +114,7 @@ const groupByCriteriaMap = {
     });
 
     const grouped = group(trsWithMonth, 'timestamp');
-    /** @type {Record<string, Partial<AggTransaction>>} */
+    /** @type {Record<string, TransactionWithAnalytics>} */
     const result = {};
 
     for (const key in grouped) {
