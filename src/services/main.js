@@ -24,6 +24,7 @@ export const init = (repos) => {
   const analyticsService = analyticsServiceInit({
     portfolioRepo: repos.portfolio,
     transactionRepo: repos.transaction,
+    barRepo: repos.bar,
   });
   const barService = barServiceInit({
     tickerRepo: repos.ticker,

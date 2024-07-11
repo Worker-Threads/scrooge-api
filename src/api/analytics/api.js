@@ -42,4 +42,15 @@ export const init = ({ analyticsService }) => ({
       });
     },
   },
+
+  gainersLosers: {
+    method: 'get',
+    access: 'common',
+    schema: schemas.general,
+    handler: async (session, request) => {
+      const { user } = session;
+
+      return analyticsService.get24hGainList(user);
+    },
+  },
 });

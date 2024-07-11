@@ -6,14 +6,23 @@ import type {
   GeneralAnalytics,
   AnalyzedTransaction,
 } from '../../data/transaction/types.d.ts';
+import type { BarRepo } from '../../data/bar/types.d.ts';
 
 interface Deps {
   portfolioRepo: PortfolioRepo;
   transactionRepo: TransactionRepo;
+  barRepo: BarRepo;
 }
 
 export type GroupCriteria = 'all' | 'portfolio' | 'asset' | 'type' | 'date';
 export type GroupFields = 'portfolioId' | 'type' | 'ticker' | 'timestamp';
+export interface Gain24hAnalytics {
+  ticker: string;
+  amount: number;
+  value: number;
+  gain24h: number;
+  profit: number;
+}
 
 interface AnalyticsService {
   _getTransactionsList: (
@@ -23,14 +32,18 @@ interface AnalyticsService {
     portfolios: Portfolio[];
     transactions: AnalyzedTransaction[];
   }>;
+
   getHoldingsTable: (
     user: User,
     opts: { portfolioId?: number; grouping?: GroupCriteria },
   ) => Promise<Partial<AnalyzedTransaction>[]>;
+
   getHoldingsDistribution: (
     user: User,
     opts: { portfolioId?: number; grouping: GroupCriteria },
   ) => Promise<Record<string, number>>;
+
+  get24hGainList: (user: User) => Promise<Gain24hAnalytics[]>;
 }
 
 export function init(deps: Deps): AnalyticsService;

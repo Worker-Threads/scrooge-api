@@ -74,6 +74,7 @@ export const init = (pool) => ({
         ...row,
         type,
         ticker: row.ticker ?? row.currency,
+        amount: +row.amount,
         initialValue: +row.initialValue,
         currentValue: +row.currentValue,
         entryPrice: +row.price,

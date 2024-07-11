@@ -1,8 +1,8 @@
 import { verifyPortfolio } from '../helpers.js';
-import { groupBy } from './helpers.js';
+import { groupBy, group } from './helpers.js';
 
 /** @type {import('./types.d.ts').init} */
-export const init = ({ portfolioRepo, transactionRepo }) => ({
+export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
   async _getTransactionsList(user, portfolioId) {
     const { id: userId } = user;
     const portfolios = [];
@@ -54,5 +54,28 @@ export const init = ({ portfolioRepo, transactionRepo }) => ({
         (value.currentValue / totalValue) * 100,
       ]),
     );
+  },
+
+  async get24hGainList(user) {
+    const { transactions, portfolios } = await this._getTransactionsList(user);
+    const tickerHoldingMap = groupBy('asset')(transactions, { portfolios });
+    const tickers = Object.keys(tickerHoldingMap);
+    const tickers24hGain = await barRepo.get24hChange(tickers);
+    const ticker24hGainMap = group(tickers24hGain, 'ticker');
+
+    return Object.entries(ticker24hGainMap).map(([ticker, analytics]) => {
+      const amount = tickerHoldingMap[ticker].amount;
+      const tickerAnalytics = analytics[0];
+      const previousValue = amount * tickerAnalytics.previousPrice;
+      const currentValue = amount * tickerAnalytics.currentPrice;
+
+      return {
+        ticker,
+        amount,
+        value: currentValue,
+        gain24h: tickerAnalytics.gain24h,
+        profit: currentValue - previousValue,
+      };
+    });
   },
 });

@@ -1,6 +1,9 @@
 import * as SchemaType from 'json-schema-to-ts';
 import type { API, ProtectedEndpoint } from '../types.d.ts';
-import type { AnalyticsService } from '../../services/analytics/types.d.ts';
+import type {
+  AnalyticsService,
+  Gain24hAnalytics,
+} from '../../services/analytics/types.d.ts';
 import type { AnalyzedTransaction } from './../../data/transaction/types.d.ts';
 
 import * as schemas from './schemas.js';
@@ -8,7 +11,7 @@ import * as schemas from './schemas.js';
 type GeneralParam = SchemaType.FromSchema<typeof schemas.general>;
 type TableParam = SchemaType.FromSchema<typeof schemas.table>;
 type AllocationParam = SchemaType.FromSchema<typeof schemas.allocation>;
-// type ChartParam = SchemaType.FromSchema<typeof schemas.chart>;
+type GainersLosersParam = SchemaType.FromSchema<typeof schemas.gainersLosers>;
 
 export interface AnalyticsApi extends API {
   general: ProtectedEndpoint<
@@ -20,7 +23,10 @@ export interface AnalyticsApi extends API {
     AllocationParam,
     Promise<Record<string, number>>
   >;
-  // chart: ProtectedEndpoint<ChartParam, any>;
+  gainersLosers: ProtectedEndpoint<
+    GainersLosersParam,
+    Promise<Gain24hAnalytics[]>
+  >;
 }
 
 interface Deps {

@@ -7,11 +7,8 @@
  * @typedef {import('../../data/transaction/types').AnalyzedTransaction} AnalyzedTransaction
  */
 
-/**
- * @param {GroupFields} identifierField
- * @param {AnalyzedTransaction[]} transactions
- */
-const group = (transactions, identifierField) => {
+/** @type {<T>(transactions: T[], identifierField: keyof T) => Record<string | number, T[]>} */
+export const group = (transactions, identifierField) => {
   return transactions.reduce((map, transaction) => {
     const identifier = transaction[identifierField];
 
@@ -19,7 +16,7 @@ const group = (transactions, identifierField) => {
     map[identifier].push(transaction);
 
     return map;
-  }, /** @type {Record<string | number, AnalyzedTransaction[]>} */ ({}));
+  }, /** @type {any} */ ({}));
 };
 
 /**
@@ -27,9 +24,16 @@ const group = (transactions, identifierField) => {
  * @returns {GeneralAnalytics}
  */
 const aggregate = (transactions) => {
-  const aggregated = { initialValue: 0, currentValue: 0, profit: 0, growth: 0 };
+  const aggregated = {
+    amount: 0,
+    initialValue: 0,
+    currentValue: 0,
+    profit: 0,
+    growth: 0,
+  };
 
   for (const transaction of transactions) {
+    aggregated.amount += transaction.amount;
     aggregated.initialValue += transaction.initialValue;
     aggregated.currentValue += transaction.currentValue;
     aggregated.profit += transaction.profit;

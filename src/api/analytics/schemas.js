@@ -47,3 +47,11 @@ export const allocation = /** @type {const} */ ({
   },
   required: ['query', 'headers'],
 });
+
+export const gainersLosers = /** @type {const} */ ({
+  type: 'object',
+  properties: {
+    headers: authHeaders,
+  },
+  required: ['headers'],
+});

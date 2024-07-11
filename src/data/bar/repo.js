@@ -1,4 +1,6 @@
-import { selectOhlc } from './sql.js';
+/** @typedef {import('../../types').AssetType} AssetType */
+
+import { selectOhlc, select24hChange } from './sql.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (pool) => ({
@@ -18,5 +20,31 @@ export const init = (pool) => ({
           timestamp: new Date(ohlc.timestamp).getTime(),
         }
       : null;
+  },
+
+  get24hChange: async (tickers) => {
+    /** @type {AssetType[]} */
+    const assetTypes = ['crypto', 'etf', 'stock', 'fiat'];
+
+    const rowsArray = await Promise.all(
+      assetTypes.map((t) => {
+        const { query, params } = select24hChange(t, tickers);
+
+        return pool.query(query, params);
+      }),
+    );
+
+    const transactions = rowsArray.flatMap(({ rows }, index) => {
+      const type = assetTypes[index];
+      return rows.map((row) => ({
+        type,
+        ticker: row.ticker ?? row.currency,
+        previousPrice: +row.previousPrice,
+        currentPrice: +row.currentPrice,
+        gain24h: +row.gain24h,
+      }));
+    });
+
+    return transactions;
   },
 });

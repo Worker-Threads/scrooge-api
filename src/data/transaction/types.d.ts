@@ -6,6 +6,7 @@ import type {
 import type { AssetType } from '../../types.d.ts';
 
 export interface GeneralAnalytics {
+  amount: number;
   initialValue: number;
   currentValue: number;
   growth: number;
