@@ -6,7 +6,7 @@ import {
   selectForUser,
   update,
   remove,
-  selectWithProfit,
+  selectAnalyzed,
 } from './sql.js';
 
 /** @type {import('./types.d.ts').init} */
@@ -62,7 +62,7 @@ export const init = (pool) => ({
 
     const rowsArray = await Promise.all(
       assetTypes.map((t) => {
-        const { query, params } = selectWithProfit(t, portfolioIds);
+        const { query, params } = selectAnalyzed(t, portfolioIds);
 
         return pool.query(query, params);
       }),
@@ -74,8 +74,8 @@ export const init = (pool) => ({
         ...row,
         type,
         ticker: row.ticker ?? row.currency,
-        entryVolume: +row.volume,
-        currentVolume: +row.currentVolume,
+        initialValue: +row.initialValue,
+        currentValue: +row.currentValue,
         entryPrice: +row.price,
         currentPrice: +row.currentPrice,
         growth: +row.growth,

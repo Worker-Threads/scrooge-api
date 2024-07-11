@@ -6,8 +6,8 @@ import type {
 import type { AssetType } from '../../types.d.ts';
 
 export interface GeneralAnalytics {
-  entryVolume: number;
-  currentVolume: number;
+  initialValue: number;
+  currentValue: number;
   growth: number;
   profit: number;
 }
@@ -29,7 +29,7 @@ export class TransactionRepo {
     schema: AssetType,
     id: number,
     definition: {
-      volume?: number;
+      amount?: number;
       timestamp?: number;
       price?: number;
     },

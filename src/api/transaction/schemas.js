@@ -13,7 +13,7 @@ export const create = /** @type {const} */ ({
         portfolioId: {
           type: 'integer',
         },
-        volume: {
+        amount: {
           type: 'number',
         },
         timestamp: {
@@ -29,7 +29,7 @@ export const create = /** @type {const} */ ({
           type: 'string',
         },
       },
-      required: ['portfolioId', 'volume', 'timestamp', 'price', 'type'],
+      required: ['portfolioId', 'amount', 'timestamp', 'price', 'type'],
       oneOf: [{ required: ['ticker'] }, { required: ['currency'] }],
       additionalProperties: false,
     },
@@ -55,7 +55,7 @@ export const update = /** @type {const} */ ({
           type: 'string',
           enum: ['crypto', 'etf', 'stock', 'fiat'],
         },
-        volume: {
+        amount: {
           type: 'number',
         },
         timestamp: {

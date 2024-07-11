@@ -30,7 +30,7 @@ CREATE SCHEMA IF NOT EXISTS "abstract";
 CREATE TABLE IF NOT EXISTS "abstract"."transaction" (
   "id" SERIAL,
   "portfolioId" INT NOT NULL REFERENCES "user"."portfolio"("id"),
-	"volume" NUMERIC(40, 17) NOT NULL,
+	"amount" NUMERIC(40, 17) NOT NULL,
   "timestamp" TIMESTAMP NOT NULL,
 	PRIMARY KEY ("id")
 );

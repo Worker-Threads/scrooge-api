@@ -3,7 +3,7 @@ import type { AssetType } from '../types.d.ts';
 export interface Transaction {
   id: number;
   portfolioId: number;
-  volume: number;
+  amount: number;
   timestamp: number;
   ticker?: string;
   currency?: string;

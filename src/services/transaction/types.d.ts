@@ -25,7 +25,7 @@ export interface TransactionService {
     user: User,
     definition: {
       id: number;
-      volume?: number;
+      amount?: number;
       timestamp?: number;
       price?: number;
     },

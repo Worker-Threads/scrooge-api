@@ -46,10 +46,10 @@ export const selectForUser = (userId, schema, portfolioId) => {
  * @returns {{ query: string, params: any[] }}
  */
 export const create = (schema, transaction) => {
-  const { portfolioId, volume, timestamp, ...specificFields } = transaction;
+  const { portfolioId, amount, timestamp, ...specificFields } = transaction;
   const fields = [
     'portfolioId',
-    'volume',
+    'amount',
     'timestamp',
     ...Object.keys(specificFields),
   ];
@@ -70,7 +70,7 @@ export const create = (schema, transaction) => {
 
   const params = [
     portfolioId,
-    volume,
+    amount,
     new Date(timestamp),
     ...Object.values(specificFields),
   ];
@@ -89,9 +89,9 @@ export const update = (schema, id, transaction) => {
   /** @type {any[]} */
   const params = [id];
 
-  if (transaction.volume) {
-    params.push(transaction.volume);
-    setClause.push(`"volume" = $${params.length}`);
+  if (transaction.amount) {
+    params.push(transaction.amount);
+    setClause.push(`"amount" = $${params.length}`);
   }
 
   if (transaction.timestamp) {
@@ -136,11 +136,13 @@ export const remove = (schema, id) => {
  * @param {number[]} portfolioIds
  * @returns {{ query: string, params: any[] }}
  */
-export const selectWithProfit = (schema, portfolioIds) => {
+export const selectAnalyzed = (schema, portfolioIds) => {
   const tcField = resolveTableName(schema);
 
-  // B - BAR_D, T - TRANSACTION
-  const rawGrowth = '(B.CLOSE - T.PRICE) / T.PRICE';
+  const initialValue = 'T.AMOUNT * T.PRICE';
+  const growth = '(B.CLOSE - T.PRICE) / T.PRICE * 100'; // Percentage %
+  const currentValue = `${initialValue} * (1 + ${growth} / 100)`;
+  const profit = `${currentValue} - ${initialValue}`;
 
   const lastBarTimestamp = `
     SELECT MAX(BAR_INNER.TIMESTAMP)
@@ -152,9 +154,10 @@ export const selectWithProfit = (schema, portfolioIds) => {
     SELECT
       T.*,
       B.CLOSE AS "currentPrice",
-      ${rawGrowth} * 100 AS "growth",
-      T.VOLUME * ${rawGrowth} AS "profit",
-      T.VOLUME * (1 + ${rawGrowth}) AS "currentVolume"
+      ${initialValue} as "initialValue",
+      ${currentValue} AS "currentValue",
+      ${growth} AS "growth",
+      ${profit} AS "profit"
     FROM ${schema}.TRANSACTION T
     JOIN ${schema}.BAR_D B ON T.${tcField} = B.${tcField}
     WHERE T."portfolioId" IN (${portfolioIds.join(',')})

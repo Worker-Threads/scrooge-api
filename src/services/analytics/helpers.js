@@ -27,17 +27,17 @@ const group = (transactions, identifierField) => {
  * @returns {GeneralAnalytics}
  */
 const aggregate = (transactions) => {
-  const aggregated = { entryVolume: 0, currentVolume: 0, profit: 0, growth: 0 };
+  const aggregated = { initialValue: 0, currentValue: 0, profit: 0, growth: 0 };
 
   for (const transaction of transactions) {
-    aggregated.entryVolume += transaction.entryVolume;
-    aggregated.currentVolume += transaction.currentVolume;
+    aggregated.initialValue += transaction.initialValue;
+    aggregated.currentValue += transaction.currentValue;
     aggregated.profit += transaction.profit;
   }
 
   return {
     ...aggregated,
-    growth: (aggregated.profit / aggregated.entryVolume) * 100,
+    growth: (aggregated.profit / aggregated.initialValue) * 100,
   };
 };
 

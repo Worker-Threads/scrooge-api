@@ -43,15 +43,15 @@ export const init = ({ portfolioRepo, transactionRepo }) => ({
     );
 
     const grouped = groupBy(grouping)(transactions, { portfolios });
-    const totalVolume = Object.values(grouped).reduce(
-      (volume, holding) => volume + holding.currentVolume,
+    const totalValue = Object.values(grouped).reduce(
+      (value, holding) => value + holding.currentValue,
       0,
     );
 
     return Object.fromEntries(
       Object.entries(grouped).map(([key, value]) => [
         key,
-        (value.currentVolume / totalVolume) * 100,
+        (value.currentValue / totalValue) * 100,
       ]),
     );
   },
