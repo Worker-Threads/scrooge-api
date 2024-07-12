@@ -43,7 +43,10 @@ interface AnalyticsService {
     opts: { portfolioId?: number; grouping: GroupCriteria },
   ) => Promise<Record<string, number>>;
 
-  get24hGainList: (user: User) => Promise<Gain24hAnalytics[]>;
+  get24hGainList: (
+    user: User,
+    portfolioId?: number,
+  ) => Promise<Gain24hAnalytics[]>;
 }
 
 export function init(deps: Deps): AnalyticsService;

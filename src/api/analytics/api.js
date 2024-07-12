@@ -46,11 +46,12 @@ export const init = ({ analyticsService }) => ({
   gainersLosers: {
     method: 'get',
     access: 'common',
-    schema: schemas.general,
+    schema: schemas.gainersLosers,
     handler: async (session, request) => {
       const { user } = session;
+      const { portfolioId } = request.query;
 
-      return analyticsService.get24hGainList(user);
+      return analyticsService.get24hGainList(user, portfolioId);
     },
   },
 });

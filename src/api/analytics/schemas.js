@@ -51,7 +51,15 @@ export const allocation = /** @type {const} */ ({
 export const gainersLosers = /** @type {const} */ ({
   type: 'object',
   properties: {
+    query: {
+      type: 'object',
+      properties: {
+        portfolioId: {
+          type: 'number',
+        },
+      },
+    },
     headers: authHeaders,
   },
-  required: ['headers'],
+  required: ['query', 'headers'],
 });

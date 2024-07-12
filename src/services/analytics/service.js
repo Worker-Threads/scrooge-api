@@ -56,8 +56,11 @@ export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
     );
   },
 
-  async get24hGainList(user) {
-    const { transactions, portfolios } = await this._getTransactionsList(user);
+  async get24hGainList(user, portfolioId) {
+    const { transactions, portfolios } = await this._getTransactionsList(
+      user,
+      portfolioId,
+    );
     const tickerHoldingMap = groupBy('asset')(transactions, { portfolios });
     const tickers = Object.keys(tickerHoldingMap);
     const tickers24hGain = await barRepo.get24hChange(tickers);
