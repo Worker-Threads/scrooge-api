@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: scrooge-db
+    environment:
+      POSTGRES_USER: scrooge
+      POSTGRES_PASSWORD: scrooge
+      POSTGRES_DB: scrooge
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    image: node:latest
+    container_name: scrooge-api
+    env_file:
+      - .env
+    environment:
+      - PG_HOST=scrooge-db
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/data
+    working_dir: /data
+    command: bash -c "npm install && node src/main.js"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
