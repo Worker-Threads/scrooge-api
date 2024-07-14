@@ -12,7 +12,9 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   api:
-    image: node:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: scrooge-api
     env_file:
       - .env
@@ -23,7 +25,6 @@ services:
     volumes:
       - .:/data
     working_dir: /data
-    command: bash -c "npm install && node src/main.js"
     depends_on:
       - db
 
