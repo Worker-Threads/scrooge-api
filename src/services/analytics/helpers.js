@@ -83,16 +83,18 @@ export const groupBy = (criteria) =>
 
     asset: (transactions) => {
       const grouped = group(transactions, 'ticker');
-      /** @type {Record<string, GeneralAnalytics & { ticker: string }>} */
+      /** @type {Record<string, GeneralAnalytics & { ticker: string, avgEntryPrice: number }>} */
       const result = {};
 
       for (const key in grouped) {
         const trs = grouped[key];
         const agg = aggregate(trs);
+        const avgEntryPrice = agg.initialValue / agg.amount;
 
         result[key] = {
           ...agg,
           ticker: key,
+          avgEntryPrice,
         };
       }
 
