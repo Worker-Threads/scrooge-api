@@ -1,3 +1,5 @@
+/** @typedef {import('./helpers.js').GeneralAnalytics} GeneralAnalytics */
+
 import { verifyPortfolio } from '../helpers.js';
 import { groupBy, group } from './helpers.js';
 
@@ -37,6 +39,18 @@ export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
   },
 
   async getHoldingsDistribution(user, { portfolioId, grouping }) {
+    /** @type {Record<string, string>} */
+    const distributionGrouping = {
+      portfolio: 'portfolioTitle',
+      asset: 'ticker',
+      type: 'type',
+      date: 'timestamp',
+    };
+
+    const group = /** @type {keyof GeneralAnalytics} */ (
+      distributionGrouping[grouping]
+    );
+
     const { portfolios, transactions } = await this._getTransactionsList(
       user,
       portfolioId,
@@ -49,8 +63,8 @@ export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
     );
 
     return Object.fromEntries(
-      Object.entries(grouped).map(([key, value]) => [
-        key,
+      Object.entries(grouped).map(([_key, value]) => [
+        value[group],
         (value.currentValue / totalValue) * 100,
       ]),
     );
