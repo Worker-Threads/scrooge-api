@@ -63,3 +63,23 @@ export const gainersLosers = /** @type {const} */ ({
   },
   required: ['query', 'headers'],
 });
+
+export const chart = /** @type {const} */ ({
+  type: 'object',
+  properties: {
+    query: {
+      type: 'object',
+      properties: {
+        portfolioId: {
+          type: 'number',
+        },
+        grouping: {
+          type: 'string',
+          enum: ['portfolio', 'asset', 'type'],
+        },
+      },
+    },
+    headers: authHeaders,
+  },
+  required: ['query', 'headers'],
+});

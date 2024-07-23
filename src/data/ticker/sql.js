@@ -1,18 +1,11 @@
 /** @typedef {import('../../types').AssetType} AssetType */
 
-/**
- * @param {AssetType} schema
- * @returns {'ticker' | 'currency' | null}
- */
-export const resolveTableName = (schema) => {
-  const tickerSchemas = ['crypto', 'etf', 'stock'];
-  const currencySchemas = ['fiat'];
-
-  return tickerSchemas.includes(schema)
-    ? 'ticker'
-    : currencySchemas.includes(schema)
-      ? 'currency'
-      : null;
+/** @type {Record<AssetType,'ticker' | 'currency' >} */
+export const symbolFieldName = {
+  crypto: 'ticker',
+  etf: 'ticker',
+  stock: 'ticker',
+  fiat: 'currency',
 };
 
 /**
@@ -22,7 +15,7 @@ export const resolveTableName = (schema) => {
  * @returns {{ query: string, params: any[] }}
  */
 export const selectBySymbol = (schema, symbol, limit) => {
-  const table = resolveTableName(schema);
+  const table = symbolFieldName[schema];
 
   let query = `
     SELECT * FROM "${schema}"."${table}"

@@ -1,10 +1,12 @@
 /**
+ * @typedef {import('../../entities/ohlc').OHLC} OHLC
  * @typedef {import('../../types').AssetType} AssetType
- * @typedef {import('./types').GroupFields} GroupFields
  * @typedef {import('./types').GroupCriteria} GroupCriteria
  * @typedef {import('./types').groupByCriteria} groupByCriteria
  * @typedef {import('../../data/transaction/types').GeneralAnalytics} GeneralAnalytics
  * @typedef {import('../../data/transaction/types').AnalyzedTransaction} AnalyzedTransaction
+ *
+ * @typedef {Record<number, { amount: number; initialValue: number }>} HoldingsThroughTime
  */
 
 /** @type {<T>(transactions: T[], identifierField: keyof T) => Record<string | number, T[]>} */
@@ -155,3 +157,57 @@ export const groupBy = (criteria) =>
       return result;
     },
   })[criteria];
+
+/**
+ * @param {AnalyzedTransaction[]} transactions
+ * @returns {HoldingsThroughTime}
+ */
+export const getAmountThroughTime = (transactions) => {
+  let amount = 0;
+  let initialValue = 0;
+
+  const holdingsThroughTime = /** @type {HoldingsThroughTime} */ ({});
+
+  transactions.forEach((t) => {
+    amount += t.amount;
+    initialValue += t.amount * (t.price ?? 0);
+
+    holdingsThroughTime[t.timestamp] = {
+      amount,
+      initialValue,
+    };
+  });
+
+  return holdingsThroughTime;
+};
+
+/**
+ * @param {HoldingsThroughTime} holdingsThroughTime
+ * @param {OHLC[]} bars
+ * @returns {{
+ * amount: number;
+ * initialValue: number;
+ * currentValue: number;
+ * timestamp: number;
+ * }[]}
+ */
+export const getValueThroughTime = (holdingsThroughTime, bars) => {
+  const timestamps = Object.keys(holdingsThroughTime).map((ts) => parseInt(ts));
+  const values = bars.map(({ timestamp, close }) => {
+    for (let i = timestamps.length - 1; i >= 0; i--) {
+      if (timestamp >= timestamps[i]) {
+        const { amount, initialValue } = holdingsThroughTime[timestamps[i]];
+        const currentValue = amount * close;
+
+        return {
+          amount,
+          initialValue,
+          currentValue,
+          timestamp,
+        };
+      }
+    }
+  });
+
+  return values.filter((v) => !!v);
+};

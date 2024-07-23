@@ -1,3 +1,4 @@
+import type { AssetType } from '../../types.d.ts';
 import type { User } from '../../entities/user.d.ts';
 import type { Portfolio } from '../../entities/portfolio.d.ts';
 import type { PortfolioRepo } from '../../data/portfolio/types.d.ts';
@@ -24,7 +25,26 @@ export interface Gain24hAnalytics {
   profit: number;
 }
 
+export interface GroupedLineChartAnalytics {
+  amount: number;
+  initialValue: number;
+  currentValue: number;
+  timestamp: number;
+}
+
+export interface LineChartAnalytics {
+  type: AssetType;
+  ticker: string;
+  portfolioTitle: string;
+  amount: number;
+  initialValue: number;
+  currentValue: number;
+  timestamp: number;
+}
+
 interface AnalyticsService {
+  _getPortfolios: (user: User, portfolioId?: number) => Promise<Portfolio[]>;
+
   _getTransactionsList: (
     user: User,
     portfolioId?: number,
@@ -47,6 +67,19 @@ interface AnalyticsService {
     user: User,
     portfolioId?: number,
   ) => Promise<Gain24hAnalytics[]>;
+
+  _getAssetLineChart: (
+    portfolio: Portfolio,
+    schema: AssetType,
+    symbol: string,
+  ) => Promise<LineChartAnalytics[]>;
+
+  getLineChart: (
+    user: User,
+    opts: { portfolioId?: number; grouping?: 'portfolio' | 'asset' | 'type' },
+  ) => Promise<
+    Record<string, (GroupedLineChartAnalytics & GeneralAnalytics)[]>
+  >;
 }
 
 export function init(deps: Deps): AnalyticsService;

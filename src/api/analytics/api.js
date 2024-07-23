@@ -43,6 +43,18 @@ export const init = ({ analyticsService }) => ({
     },
   },
 
+  chart: {
+    method: 'get',
+    access: 'common',
+    schema: schemas.chart,
+    handler: (session, request) => {
+      const { user } = session;
+      const { portfolioId, grouping } = request.query;
+
+      return analyticsService.getLineChart(user, { portfolioId, grouping });
+    },
+  },
+
   gainersLosers: {
     method: 'get',
     access: 'common',

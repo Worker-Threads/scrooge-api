@@ -1,7 +1,7 @@
 /** @typedef {import('../../entities/transaction').Transaction} Transaction */
 /** @typedef {import('../../types').AssetType} AssetType */
 
-import { resolveTableName } from '../ticker/sql.js';
+import { symbolFieldName } from '../ticker/sql.js';
 
 /**
  * @param {AssetType} schema
@@ -133,22 +133,52 @@ export const remove = (schema, id) => {
 
 /**
  * @param {AssetType} schema
- * @param {number[]} portfolioIds
+ * @param {number} portfolioId
  * @returns {{ query: string, params: any[] }}
  */
-export const selectAnalyzed = (schema, portfolioIds) => {
-  const tcField = resolveTableName(schema);
+export const selectTickers = (schema, portfolioId) => {
+  const symbolField = symbolFieldName[schema];
+
+  const query = `
+    SELECT DISTINCT("${symbolField}")
+    FROM "${schema}"."transaction"
+    WHERE "portfolioId" = $1;
+  `;
+
+  return { query, params: [portfolioId] };
+};
+
+/**
+ * @param {number[]} portfolioIds
+ * @param {AssetType} schema
+ * @param {string} [ticker]
+ * @returns {{ query: string, params: any[] }}
+ */
+export const selectAnalyzed = (portfolioIds, schema, ticker) => {
+  const symbolField = symbolFieldName[schema];
 
   const initialValue = 'T.AMOUNT * T.PRICE';
   const growth = '(B.CLOSE - T.PRICE) / T.PRICE * 100'; // Percentage %
   const currentValue = `${initialValue} * (1 + ${growth} / 100)`;
   const profit = `${currentValue} - ${initialValue}`;
 
+  const params = [];
+
   const lastBarTimestamp = `
     SELECT MAX(BAR_INNER.TIMESTAMP)
     FROM ${schema}.BAR_D BAR_INNER
-    WHERE BAR_INNER.${tcField} = T.${tcField}
+    WHERE BAR_INNER.${symbolField} = T.${symbolField}
   `;
+
+  let where = `
+    WHERE T."portfolioId" IN (${portfolioIds.join(',')})
+    AND B.TIMESTAMP = (${lastBarTimestamp})
+  `;
+
+  if (ticker) {
+    where += `AND T."${symbolField}" = $1`;
+    params.push(ticker);
+  }
 
   const query = `
     SELECT
@@ -159,10 +189,10 @@ export const selectAnalyzed = (schema, portfolioIds) => {
       ${growth} AS "growth",
       ${profit} AS "profit"
     FROM ${schema}.TRANSACTION T
-    JOIN ${schema}.BAR_D B ON T.${tcField} = B.${tcField}
-    WHERE T."portfolioId" IN (${portfolioIds.join(',')})
-    AND B.TIMESTAMP = (${lastBarTimestamp});
+    JOIN ${schema}.BAR_D B ON T.${symbolField} = B.${symbolField}
+    ${where}
+    ORDER BY T.TIMESTAMP;
   `;
 
-  return { query, params: [] };
+  return { query, params };
 };

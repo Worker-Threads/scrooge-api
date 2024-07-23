@@ -1,6 +1,7 @@
 /** @typedef {import('../../types').AssetType} AssetType */
 
-import { selectOhlc, select24hChange } from './sql.js';
+import { selectOhlc, select24hChange, selectHistory } from './sql.js';
+import { getDatesInRange } from './time.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (pool) => ({
@@ -46,5 +47,39 @@ export const init = (pool) => ({
     });
 
     return transactions;
+  },
+
+  getHistory: async (schema, ticker, from, to = Date.now()) => {
+    const { query, params } = selectHistory(schema, ticker, from, to);
+    const { rows } = await pool.query(query, params);
+
+    return rows.map((r) => ({
+      ...r,
+      timestamp: new Date(r.timestamp).getTime(),
+    }));
+  },
+
+  async getFilledHistory(schema, ticker, from, to = Date.now()) {
+    const history = await this.getHistory(schema, ticker, from, to);
+    const timeRange = getDatesInRange(from, to);
+
+    let prevBar = { open: 0, high: 0, low: 0, close: 0 };
+    const result = [];
+
+    for (let i = 0, j = 0; i < timeRange.length; i += 1) {
+      const bar = history[j];
+      const time = new Date(timeRange[i]).getTime();
+      const barTime = new Date(bar?.timestamp).getTime();
+
+      if (time === barTime) {
+        prevBar = bar;
+        result.push(bar);
+        j += 1;
+      } else {
+        result.push({ ...prevBar, timestamp: time });
+      }
+    }
+
+    return result;
   },
 });

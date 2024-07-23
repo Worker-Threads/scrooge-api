@@ -42,6 +42,14 @@ export class TransactionRepo {
   ) => Promise<Transaction[]>;
   findById: (schema: AssetType, id: number) => Promise<Transaction | null>;
   remove: (schema: AssetType, id: number) => Promise<{ removed: boolean }>;
+  getPortfolioTickers: (
+    portfolioId: number,
+  ) => Promise<Record<AssetType, string[]>>;
+  getAnalyzedForTicker: (
+    portfolioId: number,
+    schema: AssetType,
+    symbol: string,
+  ) => Promise<AnalyzedTransaction[]>;
   getAnalyzedTransactions: (
     portfolioIds: number[],
   ) => Promise<AnalyzedTransaction[]>;

@@ -3,8 +3,12 @@ import type { API, ProtectedEndpoint } from '../types.d.ts';
 import type {
   AnalyticsService,
   Gain24hAnalytics,
+  GroupedLineChartAnalytics,
 } from '../../services/analytics/types.d.ts';
-import type { AnalyzedTransaction } from './../../data/transaction/types.d.ts';
+import type {
+  AnalyzedTransaction,
+  GeneralAnalytics,
+} from './../../data/transaction/types.d.ts';
 
 import * as schemas from './schemas.js';
 
@@ -12,6 +16,7 @@ type GeneralParam = SchemaType.FromSchema<typeof schemas.general>;
 type TableParam = SchemaType.FromSchema<typeof schemas.table>;
 type AllocationParam = SchemaType.FromSchema<typeof schemas.allocation>;
 type GainersLosersParam = SchemaType.FromSchema<typeof schemas.gainersLosers>;
+type ChartParam = SchemaType.FromSchema<typeof schemas.chart>;
 
 export interface AnalyticsApi extends API {
   general: ProtectedEndpoint<
@@ -22,6 +27,10 @@ export interface AnalyticsApi extends API {
   allocation: ProtectedEndpoint<
     AllocationParam,
     Promise<Record<string, number>>
+  >;
+  chart: ProtectedEndpoint<
+    ChartParam,
+    Promise<Record<string, (GroupedLineChartAnalytics & GeneralAnalytics)[]>>
   >;
   gainersLosers: ProtectedEndpoint<
     GainersLosersParam,

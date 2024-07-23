@@ -6,8 +6,10 @@ import {
   selectForUser,
   update,
   remove,
+  selectTickers,
   selectAnalyzed,
 } from './sql.js';
+import { pgToAnalyzedRow } from './transform.js';
 
 /** @type {import('./types.d.ts').init} */
 export const init = (pool) => ({
@@ -56,13 +58,37 @@ export const init = (pool) => ({
     return { removed };
   },
 
+  getPortfolioTickers: async (portfolioId) => {
+    const result = /** @type {Record<AssetType, string[]>} */ ({});
+    /** @type {AssetType[]} */
+    const assetTypes = ['crypto', 'etf', 'stock', 'fiat'];
+    await Promise.all(
+      assetTypes.map(async (t) => {
+        const { query, params } = selectTickers(t, portfolioId);
+        const { rows } = await pool.query(query, params);
+        const tickers = rows.map((t) => t.ticker ?? t.currency);
+
+        result[t] = tickers;
+      }),
+    );
+
+    return result;
+  },
+
+  getAnalyzedForTicker: async (portfolioId, schema, symbol) => {
+    const { query, params } = selectAnalyzed([portfolioId], schema, symbol);
+    const { rows } = await pool.query(query, params);
+
+    return rows.map((row) => pgToAnalyzedRow(row, schema));
+  },
+
   getAnalyzedTransactions: async (portfolioIds) => {
     /** @type {AssetType[]} */
     const assetTypes = ['crypto', 'etf', 'stock', 'fiat'];
 
     const rowsArray = await Promise.all(
       assetTypes.map((t) => {
-        const { query, params } = selectAnalyzed(t, portfolioIds);
+        const { query, params } = selectAnalyzed(portfolioIds, t);
 
         return pool.query(query, params);
       }),
@@ -70,19 +96,7 @@ export const init = (pool) => ({
 
     const transactions = rowsArray.flatMap(({ rows }, index) => {
       const type = assetTypes[index];
-      return rows.map((row) => ({
-        ...row,
-        type,
-        ticker: row.ticker ?? row.currency,
-        amount: +row.amount,
-        initialValue: +row.initialValue,
-        currentValue: +row.currentValue,
-        entryPrice: +row.price,
-        currentPrice: +row.currentPrice,
-        growth: +row.growth,
-        profit: +row.profit,
-        timestamp: new Date(row.timestamp).getTime(),
-      }));
+      return rows.map((row) => pgToAnalyzedRow(row, type));
     });
 
     return transactions;

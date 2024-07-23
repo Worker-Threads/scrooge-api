@@ -8,7 +8,6 @@ export class BarRepo {
     ticker: string,
     timestamp: number,
   ) => Promise<OHLC | null>;
-
   get24hChange: (tickers: string[]) => Promise<
     {
       type: AssetType;
@@ -18,6 +17,18 @@ export class BarRepo {
       gain24h: number;
     }[]
   >;
+  getHistory: (
+    schema: AssetType,
+    ticker: string,
+    from: number,
+    to?: number,
+  ) => Promise<OHLC[]>;
+  getFilledHistory: (
+    schema: AssetType,
+    ticker: string,
+    from: number,
+    to?: number,
+  ) => Promise<OHLC[]>;
 }
 
 export function init(pg: Pool): BarRepo;
