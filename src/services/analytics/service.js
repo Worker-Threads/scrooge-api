@@ -1,6 +1,6 @@
 /**
- * @typedef {import('../../data/transaction/types').GeneralAnalytics} GeneralAnalytics
  * @typedef {import('../../types').AssetType} AssetType
+ * @typedef {import('../../data/transaction/types').GeneralAnalytics} GeneralAnalytics
  * @typedef {import('./types').LineChartAnalytics} LineChartAnalytics
  * @typedef {import('./types').GroupedLineChartAnalytics} GroupedLineChartAnalytics
  */
@@ -11,6 +11,7 @@ import {
   group,
   getAmountThroughTime,
   getValueThroughTime,
+  aggregateByTimestamp,
 } from './helpers.js';
 
 /** @type {Record<string, string>} */
@@ -171,63 +172,8 @@ export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
 
     for (const key in grouped) {
       const holdings = grouped[key];
-      const holdingsByTimestamp =
-        /** @type {Record<number, GroupedLineChartAnalytics>} */ ({});
-
-      for (const holding of holdings) {
-        if (!holdingsByTimestamp[holding.timestamp]) {
-          holdingsByTimestamp[holding.timestamp] = {
-            amount: 0,
-            commission: 0,
-            initialValue: 0,
-            initialValueCommissionIncluded: 0,
-            currentValue: 0,
-            timestamp: holding.timestamp,
-          };
-        }
-
-        const holdingByTimestamp = holdingsByTimestamp[holding.timestamp];
-
-        holdingByTimestamp.amount += holding.amount;
-        holdingByTimestamp.commission += holding.commission;
-        holdingByTimestamp.initialValue += holding.initialValue;
-        holdingByTimestamp.initialValueCommissionIncluded +=
-          holding.initialValueCommissionIncluded;
-        holdingByTimestamp.currentValue += holding.currentValue;
-      }
-
-      result[key] = Object.values(holdingsByTimestamp).map((el) => {
-        const {
-          amount,
-          commission,
-          initialValue,
-          initialValueCommissionIncluded,
-          currentValue,
-          timestamp,
-        } = el;
-
-        const index = currentValue / initialValue;
-        const indexCommissionIncluded =
-          currentValue / initialValueCommissionIncluded;
-        const profit = currentValue - initialValue;
-        const profitCommissionIncluded =
-          currentValue - initialValueCommissionIncluded;
-        const growth = (profit / initialValue) * 100; // Percentage %
-
-        return {
-          amount,
-          commission,
-          initialValue,
-          initialValueCommissionIncluded,
-          currentValue,
-          index,
-          indexCommissionIncluded,
-          growth,
-          profit,
-          profitCommissionIncluded,
-          timestamp,
-        };
-      });
+      const holdingsByTimestamp = aggregateByTimestamp(holdings);
+      result[key] = Object.values(holdingsByTimestamp);
     }
 
     return result;

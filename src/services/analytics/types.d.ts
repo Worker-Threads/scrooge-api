@@ -31,6 +31,11 @@ export interface GroupedLineChartAnalytics {
   initialValue: number;
   initialValueCommissionIncluded: number;
   currentValue: number;
+  growth: number;
+  profit: number;
+  profitCommissionIncluded: number;
+  index: number;
+  indexCommissionIncluded: number;
   timestamp: number;
 }
 

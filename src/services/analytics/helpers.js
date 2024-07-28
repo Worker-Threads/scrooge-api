@@ -3,6 +3,8 @@
  * @typedef {import('../../types').AssetType} AssetType
  * @typedef {import('./types').GroupCriteria} GroupCriteria
  * @typedef {import('./types').groupByCriteria} groupByCriteria
+ * @typedef {import('./types').LineChartAnalytics} LineChartAnalytics
+ * @typedef {import('./types').GroupedLineChartAnalytics} GroupedLineChartAnalytics
  * @typedef {import('../../data/transaction/types').GeneralAnalytics} GeneralAnalytics
  * @typedef {import('../../data/transaction/types').AnalyzedTransaction} AnalyzedTransaction
  *
@@ -238,4 +240,58 @@ export const getValueThroughTime = (holdingsThroughTime, bars) => {
   });
 
   return values.filter((v) => !!v);
+};
+
+/**
+ * @param {LineChartAnalytics[]} holdings
+ * @returns {Record<number, GroupedLineChartAnalytics>}
+ */
+export const aggregateByTimestamp = (holdings) => {
+  const holdingsByTimestamp =
+    /** @type {Record<number, GroupedLineChartAnalytics>} */ ({});
+
+  for (const holding of holdings) {
+    const holdingByTimestamp = holdingsByTimestamp[holding.timestamp] ?? {
+      amount: 0,
+      commission: 0,
+      initialValue: 0,
+      initialValueCommissionIncluded: 0,
+      currentValue: 0,
+      growth: 0,
+      profit: 0,
+      profitCommissionIncluded: 0,
+      index: 0,
+      indexCommissionIncluded: 0,
+      timestamp: holding.timestamp,
+    };
+
+    holdingByTimestamp.amount += holding.amount;
+    holdingByTimestamp.commission += holding.commission;
+    holdingByTimestamp.initialValue += holding.initialValue;
+    holdingByTimestamp.initialValueCommissionIncluded +=
+      holding.initialValueCommissionIncluded;
+    holdingByTimestamp.currentValue += holding.currentValue;
+
+    const { initialValue, initialValueCommissionIncluded, currentValue } =
+      holdingByTimestamp;
+
+    const index = currentValue / initialValue;
+    const indexCommissionIncluded =
+      currentValue / initialValueCommissionIncluded;
+    const profit = currentValue - initialValue;
+    const profitCommissionIncluded =
+      currentValue - initialValueCommissionIncluded;
+    const growth = (profit / initialValue) * 100;
+
+    holdingsByTimestamp[holding.timestamp] = {
+      ...holdingByTimestamp,
+      index,
+      indexCommissionIncluded,
+      growth,
+      profit,
+      profitCommissionIncluded,
+    };
+  }
+
+  return holdingsByTimestamp;
 };
