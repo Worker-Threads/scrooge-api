@@ -19,7 +19,6 @@ export interface GeneralAnalytics {
 export interface AnalyzedTransaction
   extends TypedTransaction,
     GeneralAnalytics {
-  ticker: string;
   entryPrice: number;
   currentPrice: number;
 }
