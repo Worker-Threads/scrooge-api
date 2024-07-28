@@ -10,27 +10,21 @@ export const create = /** @type {const} */ ({
           type: 'string',
           enum: ['crypto', 'etf', 'stock', 'fiat'],
         },
-        portfolioId: {
-          type: 'integer',
-        },
-        amount: {
-          type: 'number',
-        },
-        timestamp: {
-          type: 'number',
-        },
-        price: {
-          type: 'number',
-        },
-        ticker: {
-          type: 'string',
-        },
-        currency: {
-          type: 'string',
-        },
+        portfolioId: { type: 'integer' },
+        amount: { type: 'number' },
+        timestamp: { type: 'number' },
+        price: { type: 'number' },
+        ticker: { type: 'string' },
       },
-      required: ['portfolioId', 'amount', 'timestamp', 'price', 'type'],
-      oneOf: [{ required: ['ticker'] }, { required: ['currency'] }],
+      required: [
+        'portfolioId',
+        'ticker',
+        'amount',
+        'timestamp',
+        'price',
+        'type',
+      ],
+
       additionalProperties: false,
     },
     headers: authHeaders,

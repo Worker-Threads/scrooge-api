@@ -1,13 +1,5 @@
 /** @typedef {import('../../types').AssetType} AssetType */
 
-/** @type {Record<AssetType,'ticker' | 'currency' >} */
-export const symbolFieldName = {
-  crypto: 'ticker',
-  etf: 'ticker',
-  stock: 'ticker',
-  fiat: 'currency',
-};
-
 /**
  * @param {AssetType} schema
  * @param {string} symbol
@@ -15,14 +7,12 @@ export const symbolFieldName = {
  * @returns {{ query: string, params: any[] }}
  */
 export const selectBySymbol = (schema, symbol, limit) => {
-  const table = symbolFieldName[schema];
-
   let query = `
-    SELECT * FROM "${schema}"."${table}"
+    SELECT * FROM "${schema}"."ticker"
     WHERE REPLACE(LOWER("symbol"), ' ', '') LIKE LOWER($1)
   `;
 
-  const orderBy = table === 'currency' ? '"symbol"' : '"marketCap" DESC';
+  const orderBy = schema === 'fiat' ? '"symbol"' : '"marketCap" DESC';
   query += `ORDER BY ${orderBy} `;
 
   /** @type {any[]} */

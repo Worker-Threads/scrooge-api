@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS "abstract"."transaction" (
 );
 
 CREATE TABLE IF NOT EXISTS "fiat"."transaction" (
-  "currency" VARCHAR(10) REFERENCES fiat.currency("symbol"),
+  "ticker" VARCHAR(10) REFERENCES fiat.ticker("symbol"),
   "price" NUMERIC(40, 17) NOT NULL
 ) INHERITS ("abstract"."transaction");
 

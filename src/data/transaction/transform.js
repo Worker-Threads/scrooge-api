@@ -5,7 +5,6 @@
 export const pgToAnalyzedRow = (row, type) => ({
   ...row,
   type,
-  ticker: row.ticker ?? row.currency,
   amount: +row.amount,
   initialValue: +row.initialValue,
   currentValue: +row.currentValue,

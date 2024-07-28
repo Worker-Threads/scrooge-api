@@ -5,9 +5,8 @@ export interface Transaction {
   portfolioId: number;
   amount: number;
   timestamp: number;
-  ticker?: string;
-  currency?: string;
-  price?: number;
+  ticker: string;
+  price: number;
 }
 
 export interface TypedTransaction extends Transaction {

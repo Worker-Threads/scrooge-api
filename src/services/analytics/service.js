@@ -155,7 +155,9 @@ export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
       }),
     );
 
-    const chart = (await Promise.all(promises)).flat();
+    const chart = (await Promise.all(promises))
+      .flat()
+      .sort((b1, b2) => +b1.timestamp - +b2.timestamp);
 
     const grouped = grouping
       ? group(
@@ -193,8 +195,8 @@ export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
         const { amount, initialValue, currentValue, timestamp } = el;
 
         const index = currentValue / initialValue;
-        const growth = currentValue - initialValue;
-        const profit = growth / initialValue;
+        const profit = currentValue - initialValue;
+        const growth = (profit / initialValue) * 100; // Percentage %
 
         return {
           amount,

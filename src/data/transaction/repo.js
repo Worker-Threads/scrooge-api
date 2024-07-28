@@ -66,7 +66,7 @@ export const init = (pool) => ({
       assetTypes.map(async (t) => {
         const { query, params } = selectTickers(t, portfolioId);
         const { rows } = await pool.query(query, params);
-        const tickers = rows.map((t) => t.ticker ?? t.currency);
+        const tickers = rows.map(({ ticker }) => ticker);
 
         result[t] = tickers;
       }),

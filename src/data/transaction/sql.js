@@ -1,8 +1,6 @@
 /** @typedef {import('../../entities/transaction').Transaction} Transaction */
 /** @typedef {import('../../types').AssetType} AssetType */
 
-import { symbolFieldName } from '../ticker/sql.js';
-
 /**
  * @param {AssetType} schema
  * @param {number} id
@@ -137,10 +135,8 @@ export const remove = (schema, id) => {
  * @returns {{ query: string, params: any[] }}
  */
 export const selectTickers = (schema, portfolioId) => {
-  const symbolField = symbolFieldName[schema];
-
   const query = `
-    SELECT DISTINCT("${symbolField}")
+    SELECT DISTINCT("ticker")
     FROM "${schema}"."transaction"
     WHERE "portfolioId" = $1;
   `;
@@ -155,8 +151,6 @@ export const selectTickers = (schema, portfolioId) => {
  * @returns {{ query: string, params: any[] }}
  */
 export const selectAnalyzed = (portfolioIds, schema, ticker) => {
-  const symbolField = symbolFieldName[schema];
-
   const initialValue = 'T.AMOUNT * T.PRICE';
   const growth = '(B.CLOSE - T.PRICE) / T.PRICE * 100'; // Percentage %
   const currentValue = `${initialValue} * (1 + ${growth} / 100)`;
@@ -167,7 +161,7 @@ export const selectAnalyzed = (portfolioIds, schema, ticker) => {
   const lastBarTimestamp = `
     SELECT MAX(BAR_INNER.TIMESTAMP)
     FROM ${schema}.BAR_D BAR_INNER
-    WHERE BAR_INNER.${symbolField} = T.${symbolField}
+    WHERE BAR_INNER."ticker" = T."ticker"
   `;
 
   let where = `
@@ -176,7 +170,7 @@ export const selectAnalyzed = (portfolioIds, schema, ticker) => {
   `;
 
   if (ticker) {
-    where += `AND T."${symbolField}" = $1`;
+    where += 'AND T."ticker" = $1';
     params.push(ticker);
   }
 
@@ -189,7 +183,7 @@ export const selectAnalyzed = (portfolioIds, schema, ticker) => {
       ${growth} AS "growth",
       ${profit} AS "profit"
     FROM ${schema}.TRANSACTION T
-    JOIN ${schema}.BAR_D B ON T.${symbolField} = B.${symbolField}
+    JOIN ${schema}.BAR_D B ON T.ticker = B.ticker
     ${where}
     ORDER BY T.TIMESTAMP;
   `;

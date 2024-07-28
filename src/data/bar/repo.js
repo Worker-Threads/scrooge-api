@@ -39,7 +39,7 @@ export const init = (pool) => ({
       const type = assetTypes[index];
       return rows.map((row) => ({
         type,
-        ticker: row.ticker ?? row.currency,
+        ticker: row.ticker,
         previousPrice: +row.previousPrice,
         currentPrice: +row.currentPrice,
         gain24h: +row.gain24h,
