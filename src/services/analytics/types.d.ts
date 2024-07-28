@@ -27,7 +27,9 @@ export interface Gain24hAnalytics {
 
 export interface GroupedLineChartAnalytics {
   amount: number;
+  commission: number;
   initialValue: number;
+  initialValueCommissionIncluded: number;
   currentValue: number;
   timestamp: number;
 }
@@ -37,7 +39,9 @@ export interface LineChartAnalytics {
   ticker: string;
   portfolioTitle: string;
   amount: number;
+  commission: number;
   initialValue: number;
+  initialValueCommissionIncluded: number;
   currentValue: number;
   timestamp: number;
 }

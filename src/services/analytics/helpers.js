@@ -6,7 +6,12 @@
  * @typedef {import('../../data/transaction/types').GeneralAnalytics} GeneralAnalytics
  * @typedef {import('../../data/transaction/types').AnalyzedTransaction} AnalyzedTransaction
  *
- * @typedef {Record<number, { amount: number; initialValue: number }>} HoldingsThroughTime
+ * @typedef {Record<number, {
+ * amount: number;
+ * commission: number;
+ * initialValue: number;
+ * initialValueCommissionIncluded: number
+ * } >} HoldingsThroughTime
  */
 
 /** @type {<T>(transactions: T[], identifierField: keyof T) => Record<string | number, T[]>} */
@@ -28,17 +33,24 @@ export const group = (transactions, identifierField) => {
 const aggregate = (transactions) => {
   const aggregated = {
     amount: 0,
+    commission: 0,
     initialValue: 0,
+    initialValueCommissionIncluded: 0,
     currentValue: 0,
     profit: 0,
+    profitCommissionIncluded: 0,
     growth: 0,
   };
 
   for (const transaction of transactions) {
     aggregated.amount += transaction.amount;
+    aggregated.commission += transaction.commission;
     aggregated.initialValue += transaction.initialValue;
+    aggregated.initialValueCommissionIncluded +=
+      transaction.initialValueCommissionIncluded;
     aggregated.currentValue += transaction.currentValue;
     aggregated.profit += transaction.profit;
+    aggregated.profitCommissionIncluded += transaction.profitCommissionIncluded;
   }
 
   return {
@@ -164,17 +176,24 @@ export const groupBy = (criteria) =>
  */
 export const getAmountThroughTime = (transactions) => {
   let amount = 0;
+  let commission = 0;
   let initialValue = 0;
+  let initialValueCommissionIncluded = 0;
 
   const holdingsThroughTime = /** @type {HoldingsThroughTime} */ ({});
 
   transactions.forEach((t) => {
     amount += t.amount;
+    commission += t.commission;
     initialValue += t.amount * (t.price ?? 0);
+    initialValueCommissionIncluded +=
+      t.amount * (t.price ?? 0) + (t.commission ?? 0);
 
     holdingsThroughTime[t.timestamp] = {
       amount,
+      commission,
       initialValue,
+      initialValueCommissionIncluded,
     };
   });
 
@@ -185,10 +204,12 @@ export const getAmountThroughTime = (transactions) => {
  * @param {HoldingsThroughTime} holdingsThroughTime
  * @param {OHLC[]} bars
  * @returns {{
- * amount: number;
- * initialValue: number;
- * currentValue: number;
- * timestamp: number;
+ *  amount: number;
+ *  commission: number;
+ *  initialValue: number;
+ *  initialValueCommissionIncluded: number;
+ *  currentValue: number;
+ *  timestamp: number;
  * }[]}
  */
 export const getValueThroughTime = (holdingsThroughTime, bars) => {
@@ -196,12 +217,19 @@ export const getValueThroughTime = (holdingsThroughTime, bars) => {
   const values = bars.map(({ timestamp, close }) => {
     for (let i = timestamps.length - 1; i >= 0; i--) {
       if (timestamp >= timestamps[i]) {
-        const { amount, initialValue } = holdingsThroughTime[timestamps[i]];
+        const {
+          amount,
+          commission,
+          initialValue,
+          initialValueCommissionIncluded,
+        } = holdingsThroughTime[timestamps[i]];
         const currentValue = amount * close;
 
         return {
           amount,
+          commission,
           initialValue,
+          initialValueCommissionIncluded,
           currentValue,
           timestamp,
         };

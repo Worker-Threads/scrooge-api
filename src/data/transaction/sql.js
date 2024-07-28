@@ -102,6 +102,11 @@ export const update = (schema, id, transaction) => {
     setClause.push(`"price" = $${params.length}`);
   }
 
+  if (transaction.commission) {
+    params.push(transaction.commission);
+    setClause.push(`"commission" = $${params.length}`);
+  }
+
   const query = `
     UPDATE "${schema}"."transaction"
     SET ${setClause.join(',')}
@@ -152,9 +157,11 @@ export const selectTickers = (schema, portfolioId) => {
  */
 export const selectAnalyzed = (portfolioIds, schema, ticker) => {
   const initialValue = 'T.AMOUNT * T.PRICE';
+  const initialValueCommissionIncluded = initialValue + ' + T.COMMISSION';
   const growth = '(B.CLOSE - T.PRICE) / T.PRICE * 100'; // Percentage %
   const currentValue = `${initialValue} * (1 + ${growth} / 100)`;
   const profit = `${currentValue} - ${initialValue}`;
+  const profitCommissionIncluded = `${currentValue} - (${initialValueCommissionIncluded})`;
 
   const params = [];
 
@@ -179,9 +186,11 @@ export const selectAnalyzed = (portfolioIds, schema, ticker) => {
       T.*,
       B.CLOSE AS "currentPrice",
       ${initialValue} as "initialValue",
+      ${initialValueCommissionIncluded} as "initialValueCommissionIncluded",
       ${currentValue} AS "currentValue",
       ${growth} AS "growth",
-      ${profit} AS "profit"
+      ${profit} AS "profit",
+      ${profitCommissionIncluded} AS "profitCommissionIncluded"
     FROM ${schema}.TRANSACTION T
     JOIN ${schema}.BAR_D B ON T.ticker = B.ticker
     ${where}

@@ -54,3 +54,6 @@ CREATE TABLE IF NOT EXISTS "stock"."transaction" (
   "ticker" VARCHAR(10) REFERENCES stock.ticker("symbol"),
   "price" NUMERIC(40, 17) NOT NULL
 ) INHERITS ("abstract"."transaction");
+
+ALTER TABLE "abstract"."transaction" 
+ADD COLUMN "commission" NUMERIC(40, 17) DEFAULT 0;

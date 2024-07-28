@@ -7,6 +7,7 @@ export interface Transaction {
   timestamp: number;
   ticker: string;
   price: number;
+  commission: number;
 }
 
 export interface TypedTransaction extends Transaction {

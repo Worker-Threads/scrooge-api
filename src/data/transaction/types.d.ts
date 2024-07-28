@@ -7,10 +7,13 @@ import type { AssetType } from '../../types.d.ts';
 
 export interface GeneralAnalytics {
   amount: number;
+  commission: number;
   initialValue: number;
+  initialValueCommissionIncluded: number;
   currentValue: number;
   growth: number;
   profit: number;
+  profitCommissionIncluded: number;
 }
 
 export interface AnalyzedTransaction

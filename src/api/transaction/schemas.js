@@ -11,10 +11,11 @@ export const create = /** @type {const} */ ({
           enum: ['crypto', 'etf', 'stock', 'fiat'],
         },
         portfolioId: { type: 'integer' },
+        ticker: { type: 'string' },
         amount: { type: 'number' },
         timestamp: { type: 'number' },
         price: { type: 'number' },
-        ticker: { type: 'string' },
+        commission: { type: 'number', default: 0 },
       },
       required: [
         'portfolioId',
@@ -49,15 +50,10 @@ export const update = /** @type {const} */ ({
           type: 'string',
           enum: ['crypto', 'etf', 'stock', 'fiat'],
         },
-        amount: {
-          type: 'number',
-        },
-        timestamp: {
-          type: 'number',
-        },
-        price: {
-          type: 'number',
-        },
+        amount: { type: 'number' },
+        timestamp: { type: 'number' },
+        price: { type: 'number' },
+        commission: { type: 'number' },
       },
       required: ['type'],
       additionalProperties: false,
