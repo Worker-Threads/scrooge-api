@@ -82,7 +82,10 @@ export const init = ({ portfolioRepo, transactionRepo, barRepo }) => ({
     return Object.fromEntries(
       Object.entries(grouped).map(([_key, value]) => [
         value[group],
-        (value.currentValue / totalValue) * 100,
+        {
+          value: value.currentValue,
+          share: (value.currentValue / totalValue) * 100,
+        },
       ]),
     );
   },

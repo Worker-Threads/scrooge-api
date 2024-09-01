@@ -5,10 +5,7 @@ import type {
   Gain24hAnalytics,
   GroupedLineChartAnalytics,
 } from '../../services/analytics/types.d.ts';
-import type {
-  AnalyzedTransaction,
-  GeneralAnalytics,
-} from './../../data/transaction/types.d.ts';
+import type { AnalyzedTransaction } from './../../data/transaction/types.d.ts';
 
 import * as schemas from './schemas.js';
 
@@ -26,11 +23,11 @@ export interface AnalyticsApi extends API {
   table: ProtectedEndpoint<TableParam, Promise<Partial<AnalyzedTransaction>[]>>;
   allocation: ProtectedEndpoint<
     AllocationParam,
-    Promise<Record<string, number>>
+    Promise<Record<string, { share: number; value: number }>>
   >;
   chart: ProtectedEndpoint<
     ChartParam,
-    Promise<Record<string, (GroupedLineChartAnalytics & GeneralAnalytics)[]>>
+    Promise<Record<string, GroupedLineChartAnalytics[]>>
   >;
   gainersLosers: ProtectedEndpoint<
     GainersLosersParam,

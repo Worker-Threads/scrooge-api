@@ -70,7 +70,7 @@ interface AnalyticsService {
   getHoldingsDistribution: (
     user: User,
     opts: { portfolioId?: number; grouping: GroupCriteria },
-  ) => Promise<Record<string, number>>;
+  ) => Promise<Record<string, { share: number; value: number }>>;
 
   get24hGainList: (
     user: User,
