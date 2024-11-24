@@ -12,3 +12,5 @@ const repos = reposInit(pool);
 const services = servicesInit(repos);
 const apis = apisInit(services);
 serverInit({ services, apis });
+
+console.log('test');
