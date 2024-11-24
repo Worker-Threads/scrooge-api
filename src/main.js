@@ -13,4 +13,4 @@ const services = servicesInit(repos);
 const apis = apisInit(services);
 serverInit({ services, apis });
 
-console.log('test');
+console.log('tes1');
